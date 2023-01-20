@@ -28,6 +28,7 @@ int wasPressedLastFrame = 0;
 int lastNoteTiming = 0; // Used for hit feedback (miss, hit)
 int isMiss = 0;
 int isHit = 0; // TODO: 100s and 300s
+int comboCounter = 0;
 
 Texture2D akari;
 Texture2D taikoMiss;
@@ -120,6 +121,7 @@ void DrawElements() {
 
     DrawFPS(2, 0);
     DrawText(TextFormat("frames: %i", frameCounter), 100, 0, 16, LIME);
+    DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
     EndDrawing();
 }
@@ -144,7 +146,7 @@ void SendNote(Note taikoNote) {
 void UpdateGame() {
     for (int i = 0; i < MAX_NOTES; i++)
     {
-        // The actual hit window, most probably Disaster and Doesn't Work
+        // The actual hit window, most probably Disaster and Doesn't Work.
         int timingProper = Notes[i].timing + screenWidth / Notes[i].sliderVelocity;
 
         // Blue note logic
@@ -157,6 +159,7 @@ void UpdateGame() {
                 lastNoteTiming = timingProper;
                 isMiss = 0;
                 isHit = 1;
+                comboCounter++;
                 wasPressedLastFrame = 1;
             } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && ((frameCounter >= timingProper && frameCounter <= timingProper + hitWindow)
                                         || (frameCounter <= timingProper && frameCounter >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
@@ -169,6 +172,7 @@ void UpdateGame() {
                 lastNoteTiming = timingProper;
                 isMiss = 1;
                 isHit = 0;
+                comboCounter = 0;
                 wasPressedLastFrame = 1;
             }
         // Red note logic
@@ -181,6 +185,7 @@ void UpdateGame() {
                 lastNoteTiming = timingProper;
                 isMiss = 0;
                 isHit = 1;
+                comboCounter++;
                 wasPressedLastFrame = 1;
             } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && ((frameCounter >= timingProper && frameCounter <= timingProper + hitWindow)
                                         || (frameCounter <= timingProper && frameCounter >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
@@ -193,6 +198,7 @@ void UpdateGame() {
                 lastNoteTiming = timingProper;
                 isMiss = 1;
                 isHit = 0;
+                comboCounter = 0;
                 wasPressedLastFrame = 1;
             }
         }
