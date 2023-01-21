@@ -7,5 +7,8 @@
 		"**/.DS_Store": true,
 		"**/*.o": true,
 		"**/*.exe": true,
+	},
+	"files.associations": {
+		"raylib.h": "c"
 	}
 }

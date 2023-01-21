@@ -1,18 +1,7 @@
 #include "raylib.h"
-
-#define MAX_NOTES 100 // Temporary until .osu processing is done
+#include "osuProcessing.c"
 
 /* NOTE: first read the .osu file and add Notes into an array */
-
-typedef struct Note {
-    Vector2 position;
-    int sliderVelocity;
-    int timing;
-    int isBlue;
-    int bigNote;
-    int isPressed;
-    Color noteColor;
-} Note;
 
 void DrawElements();
 void DrawPlayfield();
@@ -46,6 +35,7 @@ const int screenHeight = 480;
 Sound redSound;
 Sound blueSound;
 Sound comboBreak;
+Sound mapAudio;
 
 Color redColor;
 Color blueColor;
@@ -80,6 +70,12 @@ int main() {
     redSound = LoadSound("resources/drum-hitfinish.wav");
     blueSound = LoadSound("resources/drum-hitclap.wav");
     comboBreak = LoadSound("resources/combobreak.wav");
+
+    // mapAudio = LoadSound("resources/Songs/1600415 jung jaeil - Way Back then/audio.mp3"); // Temporary
+
+    // PlaySound(mapAudio);
+
+    StartOsuFileProcessing("resources/Songs/1600415 jung jaeil - Way Back then/jung jaeil - Way Back then (tadahitotsu) [456].osu");
 
     while(!WindowShouldClose()) {
         frameCounter++;
@@ -122,6 +118,8 @@ void DrawElements() {
     DrawFPS(2, 0);
     DrawText(TextFormat("frames: %i", frameCounter), 100, 0, 16, LIME);
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
+
+    DrawText(TextFormat("note counter: %d", noteCounter), 50, 90, 48, BLACK);
 
     EndDrawing();
 }
