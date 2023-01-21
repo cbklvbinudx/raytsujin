@@ -8,9 +8,6 @@ void DrawPlayfield();
 void SendNote(Note taikoNote);
 void UpdateGame();
 
-// Initialized at the right end of the screen
-Vector2 notePosition = { 800.0f, 50.0f };
-
 int frameCounter;
 
 int wasPressedLastFrame = 0;
@@ -23,7 +20,7 @@ Texture2D akari;
 Texture2D taikoMiss;
 Texture2D taikoHit;
 
-Note Notes[MAX_NOTES] = { 0 };
+Note uselessNotes[MAX_NOTES] = { 0 };
 
 int arbitraryNumber = 100; // Temporary
 
@@ -52,16 +49,16 @@ int main() {
     SetTargetFPS(60);
 
     // Random values until .osu file processing is done
-    for(int i = 0; i < MAX_NOTES; i++)
-    {
-        arbitraryNumber += GetRandomValue(40, 70);
-        Notes[i].position = notePosition;
-        Notes[i].isPressed = 0;
-        Notes[i].timing = arbitraryNumber;
-        Notes[i].sliderVelocity = GetRandomValue(4, 10);
-        Notes[i].isBlue = GetRandomValue(0, 1);
-        Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
-    }
+    // for(int i = 0; i < MAX_NOTES; i++)
+    // {
+    //     arbitraryNumber += GetRandomValue(40, 70);
+    //     Notes[i].position = notePosition;
+    //     Notes[i].isPressed = 0;
+    //     Notes[i].timing = arbitraryNumber;
+    //     Notes[i].sliderVelocity = GetRandomValue(4, 10);
+    //     Notes[i].isBlue = GetRandomValue(0, 1);
+    //     Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
+    // }
 
     akari = LoadTexture("resources/akari.png");
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
@@ -120,6 +117,7 @@ void DrawElements() {
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
     DrawText(TextFormat("note counter: %d", noteCounter), 50, 90, 48, BLACK);
+    DrawText(TextFormat("timing: %i", goofyasstext), 50, 190, 48, BLACK);
 
     EndDrawing();
 }
