@@ -5,8 +5,7 @@
 #include <stdlib.h>
 
 int noteCounter = 0;
-Note Notes[512] = { 0 };
-char* goofyasstext = "";
+Note Notes[512] = { 0 }; // TODO: Make the size dynamic
 int hitObjectsSwitch = 0;
 
 // Initialized at the right end of the screen
@@ -25,52 +24,36 @@ void StartOsuFileProcessing(char* fileName) {
 
     while(fgets(line, 512, filePointer)) {
 
-        goofyasstext = line;
-
         if(strstr(line, "[HitObjects]") || hitObjectsSwitch) {
 
             if(hitObjectsSwitch) {
-                char* ptr = strtok(line, ",");
-                ptr = strtok(NULL, ",");
-                ptr = strtok(NULL, ",");
 
-                Notes[noteCounter].timing = strtol(ptr, NULL, 10);
-                Notes[noteCounter].position = notePosition;
+                char* commaSection = strtok(line, ",");
+                commaSection = strtok(NULL, ",");
+                commaSection = strtok(NULL, ",");
+                // We move to the timing section with this (after the second comma)
+
+                Notes[noteCounter].timing = strtol(commaSection, NULL, 10); // Converting the string to an integer
+                Notes[noteCounter].position = notePosition; // Initialize the notes
                 Notes[noteCounter].isPressed = 0;
                 Notes[noteCounter].sliderVelocity = 1;
-                ptr = strtok(NULL, ",");
-                ptr = strtok(NULL, ",");
-                if(*ptr == '0') {
+
+                commaSection = strtok(NULL, ",");
+                commaSection = strtok(NULL, ",");
+                // We move to the hitsound section with this (after the fifth comma)
+
+                if(*commaSection == '0') {
                     Notes[noteCounter].isBlue = 0;
                 }
                 else {
                     Notes[noteCounter].isBlue = 1;
                 }
+
                 Notes[noteCounter].noteColor = Notes[noteCounter].isBlue?BLUE:RED;
                 noteCounter++;
             } 
-            hitObjectsSwitch = 1;
+            hitObjectsSwitch = 1; // We hit the HitObjects line
         }
-
-        // char* ptr = strtok(line, ",");
-
-        // while(ptr != NULL) {
-        //     ptr = strtok(NULL, ",");
-        // }
-
-        // Notes[noteCounter].timing = line[1];
-        // Notes[noteCounter].position = notePosition;
-        // Notes[noteCounter].isPressed = 0;
-        // Notes[noteCounter].noteColor = Notes[noteCounter].isBlue?BLUE:RED;
-        // Notes[noteCounter].sliderVelocity = 5;
-        // if(line[4] == '0') {
-        //     Notes[noteCounter].isBlue = 0;
-        // }
-        // else {
-        //     Notes[noteCounter].isBlue = 1;
-        // }
-        // noteCounter++;
     }
-
     fclose(filePointer);
 }

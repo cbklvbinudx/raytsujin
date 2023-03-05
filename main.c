@@ -2,8 +2,6 @@
 #include "osuProcessing.c"
 #include <math.h>
 
-/* NOTE: first read the .osu file and add Notes into an array */
-
 void DrawElements();
 void DrawPlayfield();
 void SendNote(Note taikoNote);
@@ -12,14 +10,14 @@ void UpdateGame();
 float songTimeElapsed;
 
 int wasPressedLastFrame = 0;
-int lastNoteTiming = 0; // Used for hit feedback (miss, hit)
+int lastNoteTiming = 0; // Used for hit feedback images (miss, hit)
 int isMiss = 0;
 int isHit = 0; // TODO: 100s and 300s
 int comboCounter = 0;
 int currentNote = 0;
 float deltaPress = 0;
 
-Texture2D akari;
+Texture2D akari; // TODO: Change this to map background
 Texture2D taikoMiss;
 Texture2D taikoHit;
 
@@ -40,8 +38,8 @@ int main() {
     InitAudioDevice();
 
     InitWindow(screenWidth, screenHeight, "Taiko");
-    icon = LoadImage("resources/teri.png");
-    SetWindowIcon(icon); // WORKS
+    icon = LoadImage("resources/teri.png"); // TODO: Change this icon to something more fitting
+    SetWindowIcon(icon);
 
     akari = LoadTexture("resources/akari.png");
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
@@ -88,16 +86,15 @@ void DrawElements() {
         Notes[i].position.x = 100 + Notes[i].timing - songTimeElapsed;
     }    
 
-    if(isMiss && songTimeElapsed - lastNoteTiming < 10) {
-        DrawTexture(taikoMiss, -70, -50, WHITE);
+    if(isMiss && songTimeElapsed - lastNoteTiming < 300) {
+        DrawTexture(taikoMiss, -70, -50, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
-    if(isHit && songTimeElapsed - lastNoteTiming < 10) {
-        DrawTexture(taikoHit, -90, -40, WHITE);
+    if(isHit && songTimeElapsed - lastNoteTiming < 300) {
+        DrawTexture(taikoHit, -90, -40, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("current Nt: %i", currentNote), 100, 100, 16, LIME);
-    DrawText(TextFormat("current deltapress: %f", deltaPress), 100, 120, 16, LIME);
+    DrawText(TextFormat("Current Note: %i", currentNote), 2, 100, 16, BLACK);
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
     EndDrawing();
@@ -115,12 +112,12 @@ void SendNote(Note taikoNote) {
 }
 
 void UpdateGame() {
-    // The actual hit window, most probably Disaster and Doesn't Work.
     int timingProper = Notes[currentNote].timing + 100;
 
     deltaPress = timingProper - songTimeElapsed;
 
     if((timingProper < songTimeElapsed - hitWindow)) {
+        // If no note pressed in time
         comboCounter = 0;
         PlaySound(comboBreak);
         currentNote++;
@@ -128,6 +125,7 @@ void UpdateGame() {
     // Blue note logic
     else if(Notes[currentNote].isBlue) {
         if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            // If note is hit
             Notes[currentNote].isPressed = 1;
             Notes[currentNote].noteColor = Fade(BLUE, 0.1f);
 
@@ -138,7 +136,8 @@ void UpdateGame() {
             wasPressedLastFrame = 1;
             currentNote++;
         } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
-            
+            // If wrong note is pressed
+
             PlaySound(comboBreak);
 
             Notes[currentNote].isPressed = 1;
@@ -154,6 +153,7 @@ void UpdateGame() {
     // Red note logic
     } else {
         if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            // If note is hit
             Notes[currentNote].isPressed = 1;
             Notes[currentNote].noteColor = Fade(RED, 0.1f);
 
@@ -164,7 +164,8 @@ void UpdateGame() {
             wasPressedLastFrame = 1;
             currentNote++;
         } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
-            
+            // If wrong note is pressed
+
             PlaySound(comboBreak);
 
             Notes[currentNote].isPressed = 1;
