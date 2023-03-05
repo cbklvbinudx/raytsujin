@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "osuProcessing.c"
+#include <math.h>
 
 /* NOTE: first read the .osu file and add Notes into an array */
 
@@ -15,12 +16,12 @@ int lastNoteTiming = 0; // Used for hit feedback (miss, hit)
 int isMiss = 0;
 int isHit = 0; // TODO: 100s and 300s
 int comboCounter = 0;
+int currentNote = 0;
+float deltaPress = 0;
 
 Texture2D akari;
 Texture2D taikoMiss;
 Texture2D taikoHit;
-
-int arbitraryNumber = 100; // Temporary
 
 const int hitWindow = 50;
 
@@ -32,9 +33,6 @@ Sound blueSound;
 Sound comboBreak;
 Music mapAudio;
 
-Color redColor;
-Color blueColor;
-
 Image icon;
 
 int main() {
@@ -43,19 +41,7 @@ int main() {
 
     InitWindow(screenWidth, screenHeight, "Taiko");
     icon = LoadImage("resources/teri.png");
-    SetWindowIcon(icon); // Doesn't work
-
-    // Random values until .osu file processing is done
-    // for(int i = 0; i < MAX_NOTES; i++)
-    // {
-    //     arbitraryNumber += GetRandomValue(40, 70);
-    //     Notes[i].position = notePosition;
-    //     Notes[i].isPressed = 0;
-    //     Notes[i].timing = arbitraryNumber;
-    //     Notes[i].sliderVelocity = GetRandomValue(4, 10);
-    //     Notes[i].isBlue = GetRandomValue(0, 1);
-    //     Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
-    // }
+    SetWindowIcon(icon); // WORKS
 
     akari = LoadTexture("resources/akari.png");
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
@@ -95,22 +81,23 @@ void DrawElements() {
     ClearBackground(RAYWHITE);
     DrawPlayfield();
 
-    for (int i = 0; i < MAX_NOTES; i++)
+    for (int i = 0; i < noteCounter; i++)
     {
         SendNote(Notes[i]);
 
         Notes[i].position.x = 100 + Notes[i].timing - songTimeElapsed;
     }    
 
-    if(isMiss && !(songTimeElapsed - lastNoteTiming >= 10 )) {
+    if(isMiss && songTimeElapsed - lastNoteTiming < 10) {
         DrawTexture(taikoMiss, -70, -50, WHITE);
     }
-    if(isHit && !(songTimeElapsed - lastNoteTiming >= 10 )) {
+    if(isHit && songTimeElapsed - lastNoteTiming < 10) {
         DrawTexture(taikoHit, -90, -40, WHITE);
     }
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("MILISEKONDs: %f", songTimeElapsed), 100, 0, 16, LIME);
+    DrawText(TextFormat("current Nt: %i", currentNote), 100, 100, 16, LIME);
+    DrawText(TextFormat("current deltapress: %f", deltaPress), 100, 120, 16, LIME);
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
     EndDrawing();
@@ -124,71 +111,71 @@ void DrawPlayfield() {
 }
 
 void SendNote(Note taikoNote) {
-        if(taikoNote.isBlue) {
-            DrawCircleV(taikoNote.position, 50, taikoNote.noteColor);
-        } else {
-            DrawCircleV(taikoNote.position, 50, taikoNote.noteColor);
-        }
+    DrawCircleV(taikoNote.position, 50, taikoNote.noteColor);
 }
 
 void UpdateGame() {
-    for (int i = 0; i < noteCounter; i++)
-    {
-        // The actual hit window, most probably Disaster and Doesn't Work.
-        int timingProper = Notes[i].timing;
+    // The actual hit window, most probably Disaster and Doesn't Work.
+    int timingProper = Notes[currentNote].timing + 100;
 
-        // Blue note logic
-        if(Notes[i].isBlue) {
-            if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && ((songTimeElapsed >= timingProper && songTimeElapsed <= timingProper + hitWindow)
-                                        || (songTimeElapsed <= timingProper && songTimeElapsed >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
-                Notes[i].isPressed = 1;
-                Notes[i].noteColor = Fade(BLUE, 0.1f);
+    deltaPress = timingProper - songTimeElapsed;
 
-                lastNoteTiming = timingProper;
-                isMiss = 0;
-                isHit = 1;
-                comboCounter++;
-                wasPressedLastFrame = 1;
-            } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && ((songTimeElapsed >= timingProper && songTimeElapsed <= timingProper + hitWindow)
-                                        || (songTimeElapsed <= timingProper && songTimeElapsed >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
-                
-                PlaySound(comboBreak);
+    if((timingProper < songTimeElapsed - hitWindow)) {
+        comboCounter = 0;
+        PlaySound(comboBreak);
+        currentNote++;
+    }
+    // Blue note logic
+    else if(Notes[currentNote].isBlue) {
+        if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            Notes[currentNote].isPressed = 1;
+            Notes[currentNote].noteColor = Fade(BLUE, 0.1f);
 
-                Notes[i].isPressed = 1;
-                Notes[i].noteColor = BLANK;
+            lastNoteTiming = timingProper;
+            isMiss = 0;
+            isHit = 1;
+            comboCounter++;
+            wasPressedLastFrame = 1;
+            currentNote++;
+        } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            
+            PlaySound(comboBreak);
 
-                lastNoteTiming = timingProper;
-                isMiss = 1;
-                isHit = 0;
-                comboCounter = 0;
-                wasPressedLastFrame = 1;
-            }
-        // Red note logic
-        } else {
-            if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && ((songTimeElapsed >= timingProper && songTimeElapsed <= timingProper + hitWindow)
-                                        || (songTimeElapsed <= timingProper && songTimeElapsed >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
-                Notes[i].isPressed = 1;
-                Notes[i].noteColor = Fade(RED, 0.1f);
+            Notes[currentNote].isPressed = 1;
+            Notes[currentNote].noteColor = BLANK;
 
-                lastNoteTiming = timingProper;
-                isMiss = 0;
-                isHit = 1;
-                comboCounter++;
-                wasPressedLastFrame = 1;
-            } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && ((songTimeElapsed >= timingProper && songTimeElapsed <= timingProper + hitWindow)
-                                        || (songTimeElapsed <= timingProper && songTimeElapsed >= timingProper - hitWindow)) && Notes[i].isPressed == 0 && !wasPressedLastFrame) {
-                
-                PlaySound(comboBreak);
+            lastNoteTiming = timingProper;
+            isMiss = 1;
+            isHit = 0;
+            comboCounter = 0;
+            wasPressedLastFrame = 1;
+            currentNote++;
+        }
+    // Red note logic
+    } else {
+        if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            Notes[currentNote].isPressed = 1;
+            Notes[currentNote].noteColor = Fade(RED, 0.1f);
 
-                Notes[i].isPressed = 1;
-                Notes[i].noteColor = BLANK;
+            lastNoteTiming = timingProper;
+            isMiss = 0;
+            isHit = 1;
+            comboCounter++;
+            wasPressedLastFrame = 1;
+            currentNote++;
+        } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+            
+            PlaySound(comboBreak);
 
-                lastNoteTiming = timingProper;
-                isMiss = 1;
-                isHit = 0;
-                comboCounter = 0;
-                wasPressedLastFrame = 1;
-            }
+            Notes[currentNote].isPressed = 1;
+            Notes[currentNote].noteColor = BLANK;
+
+            lastNoteTiming = timingProper;
+            isMiss = 1;
+            isHit = 0;
+            comboCounter = 0;
+            wasPressedLastFrame = 1;
+            currentNote++;
         }
     }
     if(GetKeyPressed() == 0) {

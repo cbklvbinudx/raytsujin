@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-Note Notes[512] = { 0 };
 int noteCounter = 0;
+Note Notes[512] = { 0 };
 char* goofyasstext = "";
 int hitObjectsSwitch = 0;
 
