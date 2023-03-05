@@ -20,8 +20,6 @@ Texture2D akari;
 Texture2D taikoMiss;
 Texture2D taikoHit;
 
-Note uselessNotes[MAX_NOTES] = { 0 };
-
 int arbitraryNumber = 100; // Temporary
 
 const int hitWindow = 20;
@@ -46,7 +44,7 @@ int main() {
 
     SetWindowIcon(icon); // Doesn't work
     InitWindow(screenWidth, screenHeight, "Taiko");
-    SetTargetFPS(60);
+    SetTargetFPS(1000);
 
     // Random values until .osu file processing is done
     // for(int i = 0; i < MAX_NOTES; i++)
@@ -68,9 +66,9 @@ int main() {
     blueSound = LoadSound("resources/drum-hitclap.wav");
     comboBreak = LoadSound("resources/combobreak.wav");
 
-    // mapAudio = LoadSound("resources/Songs/1600415 jung jaeil - Way Back then/audio.mp3"); // Temporary
+    mapAudio = LoadSound("resources/Songs/1600415 jung jaeil - Way Back then/audio.mp3"); // Temporary
 
-    // PlaySound(mapAudio);
+    PlaySound(mapAudio);
 
     StartOsuFileProcessing("resources/Songs/1600415 jung jaeil - Way Back then/jung jaeil - Way Back then (tadahitotsu) [456].osu");
 
@@ -116,9 +114,6 @@ void DrawElements() {
     DrawText(TextFormat("frames: %i", frameCounter), 100, 0, 16, LIME);
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
-    DrawText(TextFormat("note counter: %d", noteCounter), 50, 90, 48, BLACK);
-    DrawText(TextFormat("timing: %i", goofyasstext), 50, 190, 48, BLACK);
-
     EndDrawing();
 }
 
@@ -140,7 +135,7 @@ void SendNote(Note taikoNote) {
 }
 
 void UpdateGame() {
-    for (int i = 0; i < MAX_NOTES; i++)
+    for (int i = 0; i < noteCounter; i++)
     {
         // The actual hit window, most probably Disaster and Doesn't Work.
         int timingProper = Notes[i].timing + screenWidth / Notes[i].sliderVelocity;
