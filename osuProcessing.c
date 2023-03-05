@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "osuProcessing.h"
 
 int noteCounter = 0;
 Note Notes[512] = { 0 }; // TODO: Make the size dynamic

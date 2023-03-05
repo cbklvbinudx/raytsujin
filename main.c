@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "osuProcessing.c"
+#include "osuProcessing.h"
 #include <math.h>
 
 void DrawElements();
