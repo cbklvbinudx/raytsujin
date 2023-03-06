@@ -1,13 +1,15 @@
 #include "raylib.h"
 #include "osuProcessing.h"
+#include "mainMenu.h"
+#include "config.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 
-void DrawElements();
+void DrawElementsPlaying();
 void DrawPlayfield();
 void SendNote(Note taikoNote);
-void UpdateGame();
+void UpdateGamePlaying();
 void RetryButton();
 
 float songTimeElapsed;
@@ -29,14 +31,14 @@ Texture2D taikoHit;
 
 float scrollFieldHeight = 100.0f; // Support for numbers different than 100 doesn't really work yet
 
-const int hitWindow = 50;
+const float hitWindow = 100.0f;
 
 const int screenWidth = 1600;
 const int screenHeight = 900;
 
 const char* songsDirectory = "resources/Songs/";
 char* pathToMap = "1610611 100 gecs - sympathy 4 the grinch/";
-char* pathToDifficulty = "100 gecs - sympathy 4 the grinch (clockbite) [gevbiivi5's oni].osu";
+char* pathToDifficulty = "100 gecs - sympathy 4 the grinch (clockbite) [Muzukashii].osu";
 char* fullMapPath;
 
 Sound redSound;
@@ -45,6 +47,9 @@ Sound comboBreak;
 Music mapAudio;
 
 Image icon;
+
+int gameStateSwitch = 0;
+int lastGameState = 0;
 
 int main() {
 
@@ -75,7 +80,6 @@ int main() {
     strcat(mapAudioBuffer, beatmap.audioFileName);
 
     mapAudio = LoadMusicStream(mapAudioBuffer);
-    PlayMusicStream(mapAudio);
 
     char* mapBackgroundBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(beatmap.backgroundFileName) + 1);
     strcpy(mapBackgroundBuffer, songsDirectory);
@@ -84,10 +88,21 @@ int main() {
     mapBackground = LoadTexture(mapBackgroundBuffer);
 
     while(!WindowShouldClose()) {
-        songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
-        UpdateMusicStream(mapAudio);
-        UpdateGame();
-        DrawElements();
+        if(gameStateSwitch == Menu) {
+            DrawMainMenu();
+            UpdateMainMenu();
+            lastGameState = Menu;
+        }
+        else if(gameStateSwitch == Playing) {
+            if(lastGameState != Playing) {
+                PlayMusicStream(mapAudio);
+            }
+            songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
+            lastGameState = Playing;
+            UpdateMusicStream(mapAudio);
+            UpdateGamePlaying();
+            DrawElementsPlaying();
+        }
     }
 
     CloseAudioDevice();
@@ -107,7 +122,7 @@ int main() {
     return 0;
 }
 
-void DrawElements() {
+void DrawElementsPlaying() {
     BeginDrawing();
     
     ClearBackground(RAYWHITE);
@@ -139,7 +154,7 @@ void DrawElements() {
 void DrawPlayfield() {
     DrawTexture(mapBackground, 0, 0, WHITE);
     DrawRectangleGradientH(0, 0, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
-    DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, BLACK);
+    DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
     DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK);
 
 }
@@ -148,7 +163,7 @@ void SendNote(Note taikoNote) {
     DrawCircleV(taikoNote.position, scrollFieldHeight / 2, taikoNote.noteColor);
 }
 
-void UpdateGame() {
+void UpdateGamePlaying() {
     int timingProper = Notes[currentNote].timing + 100;
 
     deltaPress = fabsf(timingProper - songTimeElapsed);

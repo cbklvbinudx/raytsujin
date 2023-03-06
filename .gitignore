@@ -1,4 +1,4 @@
 /main.code-workspace
 /main.exe
-/Makefile.Android
-.vscode/settings.json
+/resources/Songs/*
+/cmake-build-debug/
