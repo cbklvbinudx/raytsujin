@@ -8,6 +8,7 @@ void DrawElements();
 void DrawPlayfield();
 void SendNote(Note taikoNote);
 void UpdateGame();
+void RetryButton();
 
 float songTimeElapsed;
 
@@ -26,10 +27,17 @@ Texture2D mapBackground;
 Texture2D taikoMiss;
 Texture2D taikoHit;
 
+float scrollFieldHeight = 100.0f; // Support for numbers different than 100 doesn't really work yet
+
 const int hitWindow = 50;
 
-const int screenWidth = 800;
-const int screenHeight = 480;
+const int screenWidth = 1600;
+const int screenHeight = 900;
+
+const char* songsDirectory = "resources/Songs/";
+char* pathToMap = "1610611 100 gecs - sympathy 4 the grinch/";
+char* pathToDifficulty = "100 gecs - sympathy 4 the grinch (clockbite) [gevbiivi5's oni].osu";
+char* fullMapPath;
 
 Sound redSound;
 Sound blueSound;
@@ -42,7 +50,7 @@ int main() {
 
     InitAudioDevice();
 
-    InitWindow(screenWidth, screenHeight, "Taiko");
+    InitWindow(screenWidth, screenHeight, "raytsujin");
     icon = LoadImage("resources/teri.png"); // TODO: Change this icon to something more fitting
     SetWindowIcon(icon);
 
@@ -53,16 +61,27 @@ int main() {
     blueSound = LoadSound("resources/drum-hitclap.wav");
     comboBreak = LoadSound("resources/combobreak.wav");
 
-    mapAudio = LoadMusicStream("resources/Songs/1600415 jung jaeil - Way Back then/audio.mp3"); // Temporary
+    char* mapPathBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(pathToDifficulty));
+    strcpy(mapPathBuffer, songsDirectory);
+    strcat(mapPathBuffer, pathToMap);
+    strcat(mapPathBuffer, pathToDifficulty);
+    fullMapPath = mapPathBuffer;
 
+    StartOsuFileProcessing(fullMapPath);
+
+    char* mapAudioBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(beatmap.audioFileName));
+    strcpy(mapAudioBuffer, songsDirectory);
+    strcat(mapAudioBuffer, pathToMap);
+    strcat(mapAudioBuffer, beatmap.audioFileName);
+
+    mapAudio = LoadMusicStream(mapAudioBuffer);
     PlayMusicStream(mapAudio);
 
-    StartOsuFileProcessing("resources/Songs/1600415 jung jaeil - Way Back then/jung jaeil - Way Back then (tadahitotsu) [456].osu");
-
-    char* stringBuffer = malloc(strlen("resources/Songs/1600415 jung jaeil - Way Back then/") + strlen(beatmap.backgroundFileName) + 1);
-    strcpy(stringBuffer, "resources/Songs/1600415 jung jaeil - Way Back then/");
-    strcat(stringBuffer, beatmap.backgroundFileName);
-    mapBackground = LoadTexture(stringBuffer);
+    char* mapBackgroundBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(beatmap.backgroundFileName) + 1);
+    strcpy(mapBackgroundBuffer, songsDirectory);
+    strcat(mapBackgroundBuffer, pathToMap);
+    strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
+    mapBackground = LoadTexture(mapBackgroundBuffer);
 
     while(!WindowShouldClose()) {
         songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
@@ -79,7 +98,9 @@ int main() {
 
     free(beatmap.audioFileName);
     free(beatmap.backgroundFileName);
-    free(stringBuffer);
+    free(mapPathBuffer);
+    free(mapBackgroundBuffer);
+    free(mapAudioBuffer);
 
     CloseWindow();
 
@@ -108,22 +129,23 @@ void DrawElements() {
 
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("Misses: %i", missCounter), 2, 420, 16, BLACK);
-    DrawText(TextFormat("Hits: %i", hitCounter), 2, 400, 16, BLACK);
-    DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
+    DrawText(TextFormat("Misses: %i", missCounter), 2, screenHeight - 80, 16, BLACK);
+    DrawText(TextFormat("Hits: %i", hitCounter), 2, screenHeight - 60, 16, BLACK);
+    DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, BLACK);
 
     EndDrawing();
 }
 
 void DrawPlayfield() {
     DrawTexture(mapBackground, 0, 0, WHITE);
-    DrawRectangleGradientH(0, 0, 800, 100, LIGHTGRAY, BLACK);
-    DrawCircle(50, 50, 50, BLACK);
+    DrawRectangleGradientH(0, 0, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
+    DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, BLACK);
+    DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK);
 
 }
 
 void SendNote(Note taikoNote) {
-    DrawCircleV(taikoNote.position, 50, taikoNote.noteColor);
+    DrawCircleV(taikoNote.position, scrollFieldHeight / 2, taikoNote.noteColor);
 }
 
 void UpdateGame() {
@@ -213,5 +235,28 @@ void UpdateGame() {
     }
     if(IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) {
         PlaySound(redSound);
+    }
+    if(IsKeyPressed(KEY_GRAVE)) {
+        RetryButton();
+    }
+}
+
+void RetryButton() {
+    if(IsMusicStreamPlaying(mapAudio)) {
+        StopMusicStream(mapAudio);
+        PlayMusicStream(mapAudio);
+
+        for(int i = 0; i < noteCounter; i++) {
+            Notes[i].isPressed = 0;
+            Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
+        }
+
+        comboCounter = 0;
+        missCounter = 0;
+        hitCounter = 0;
+        isMiss = 0;
+        isHit = 0;
+        lastNoteTiming = 0;
+        currentNote = 0;
     }
 }

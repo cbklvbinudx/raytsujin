@@ -147,6 +147,7 @@ char* GetBeatmapInfoString(char* line) {
     spaceSeperator = strtok(NULL, ":");
     spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
 
+    // Possible memory leak =)
     char* returnString = malloc(strlen(spaceSeperator) + 1);
     strcpy(returnString, spaceSeperator);
 
