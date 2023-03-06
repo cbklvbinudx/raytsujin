@@ -1,7 +1,7 @@
 # raytsujin
 Taiko No Tatsujin clone that reads .osu files
 
-Made with [raylib](https://github.com/raysan5/raylib)
+Made with [raylib](https://github.com/raysan5/raylib) and [raygui](https://github.com/raysan5/raygui)
 
 ![Screenshot](https://i.imgur.com/TZltVtU.jpg)
 

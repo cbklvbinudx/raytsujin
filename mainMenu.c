@@ -1,3 +1,4 @@
+#define RAYGUI_IMPLEMENTATION
 #include "raylib.h"
 #include "mainMenu.h"
 #include "config.h"
@@ -8,8 +9,8 @@ void DrawMainMenu() {
 
     ClearBackground(RAYWHITE);
 
-    DrawText(TextFormat("Press enter to play %s", pathToDifficulty), screenWidth / 2 - 50, screenHeight / 2, 12, BLACK);
-
+    gameStateSwitch = GuiButton((Rectangle){ screenWidth / 3, screenWidth / 7 , screenWidth / 3, screenHeight / 7 },
+                                TextFormat("Press to play %s", pathToDifficulty));
     EndDrawing();
 }
 
