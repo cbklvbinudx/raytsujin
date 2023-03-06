@@ -22,7 +22,7 @@ int comboCounter = 0;
 int hitCounter = 0;
 int missCounter = 0;
 
-Texture2D akari; // TODO: Change this to map background
+Texture2D mapBackground;
 Texture2D taikoMiss;
 Texture2D taikoHit;
 
@@ -62,7 +62,7 @@ int main() {
     char* stringBuffer = malloc(strlen("resources/Songs/1600415 jung jaeil - Way Back then/") + strlen(beatmap.backgroundFileName) + 1);
     strcpy(stringBuffer, "resources/Songs/1600415 jung jaeil - Way Back then/");
     strcat(stringBuffer, beatmap.backgroundFileName);
-    akari = LoadTexture(stringBuffer);
+    mapBackground = LoadTexture(stringBuffer);
 
     while(!WindowShouldClose()) {
         songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
@@ -73,7 +73,7 @@ int main() {
 
     CloseAudioDevice();
 
-    UnloadTexture(akari);
+    UnloadTexture(mapBackground);
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
 
@@ -106,6 +106,7 @@ void DrawElements() {
         DrawTexture(taikoHit, -90, -40, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
+
     DrawFPS(2, 0);
     DrawText(TextFormat("Misses: %i", missCounter), 2, 420, 16, BLACK);
     DrawText(TextFormat("Hits: %i", hitCounter), 2, 400, 16, BLACK);
@@ -115,10 +116,10 @@ void DrawElements() {
 }
 
 void DrawPlayfield() {
+    DrawTexture(mapBackground, 0, 0, WHITE);
     DrawRectangleGradientH(0, 0, 800, 100, LIGHTGRAY, BLACK);
     DrawCircle(50, 50, 50, BLACK);
 
-    DrawTexture(akari, 300, 200, WHITE);
 }
 
 void SendNote(Note taikoNote) {
