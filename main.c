@@ -15,9 +15,12 @@ int wasPressedLastFrame = 0;
 int lastNoteTiming = 0; // Used for hit feedback images (miss, hit)
 int isMiss = 0;
 int isHit = 0; // TODO: 100s and 300s
-int comboCounter = 0;
 int currentNote = 0;
 float deltaPress = 0;
+
+int comboCounter = 0;
+int hitCounter = 0;
+int missCounter = 0;
 
 Texture2D akari; // TODO: Change this to map background
 Texture2D taikoMiss;
@@ -104,7 +107,8 @@ void DrawElements() {
     }
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("Current Note: %i", currentNote), 2, 100, 16, BLACK);
+    DrawText(TextFormat("Misses: %i", missCounter), 2, 420, 16, BLACK);
+    DrawText(TextFormat("Hits: %i", hitCounter), 2, 400, 16, BLACK);
     DrawText(TextFormat("%ix", comboCounter), 2, 440, 48, BLACK);
 
     EndDrawing();
@@ -131,6 +135,7 @@ void UpdateGame() {
         comboCounter = 0;
         PlaySound(comboBreak);
         currentNote++;
+        missCounter++;
     }
     // Blue note logic
     else if(Notes[currentNote].isBlue) {
@@ -145,6 +150,7 @@ void UpdateGame() {
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
+            hitCounter++;
         } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
@@ -159,6 +165,7 @@ void UpdateGame() {
             comboCounter = 0;
             wasPressedLastFrame = 1;
             currentNote++;
+            missCounter++;
         }
     // Red note logic
     } else {
@@ -173,6 +180,7 @@ void UpdateGame() {
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
+            hitCounter++;
         } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
@@ -187,6 +195,7 @@ void UpdateGame() {
             comboCounter = 0;
             wasPressedLastFrame = 1;
             currentNote++;
+            missCounter++;
         }
     }
     if(GetKeyPressed() == 0) {
