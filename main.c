@@ -1,6 +1,8 @@
 #include "raylib.h"
 #include "osuProcessing.h"
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
 
 void DrawElements();
 void DrawPlayfield();
@@ -41,7 +43,6 @@ int main() {
     icon = LoadImage("resources/teri.png"); // TODO: Change this icon to something more fitting
     SetWindowIcon(icon);
 
-    akari = LoadTexture("resources/akari.png");
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
     taikoHit = LoadTexture("resources/taiko-hit300.png");
 
@@ -55,6 +56,11 @@ int main() {
 
     StartOsuFileProcessing("resources/Songs/1600415 jung jaeil - Way Back then/jung jaeil - Way Back then (tadahitotsu) [456].osu");
 
+    char* stringBuffer = malloc(strlen("resources/Songs/1600415 jung jaeil - Way Back then/") + strlen(beatmap.backgroundFileName) + 1);
+    strcpy(stringBuffer, "resources/Songs/1600415 jung jaeil - Way Back then/");
+    strcat(stringBuffer, beatmap.backgroundFileName);
+    akari = LoadTexture(stringBuffer);
+
     while(!WindowShouldClose()) {
         songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
         UpdateMusicStream(mapAudio);
@@ -67,6 +73,10 @@ int main() {
     UnloadTexture(akari);
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
+
+    free(beatmap.audioFileName);
+    free(beatmap.backgroundFileName);
+    free(stringBuffer);
 
     CloseWindow();
 
@@ -114,7 +124,7 @@ void SendNote(Note taikoNote) {
 void UpdateGame() {
     int timingProper = Notes[currentNote].timing + 100;
 
-    deltaPress = timingProper - songTimeElapsed;
+    deltaPress = fabsf(timingProper - songTimeElapsed);
 
     if((timingProper < songTimeElapsed - hitWindow)) {
         // If no note pressed in time

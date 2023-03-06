@@ -1,5 +1,5 @@
 #include "raylib.h"
-#include "note.h"
+#include "beatmapInfo.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,7 +7,19 @@
 
 int noteCounter = 0;
 Note Notes[512] = { 0 }; // TODO: Make the size dynamic
-int hitObjectsSwitch = 0;
+
+enum sectionName {
+    General,
+    Metadata,
+    Difficulty,
+    Events,
+    TimingPoints,
+    HitObjects,
+};
+
+int sectionSwitch = 0;
+
+Beatmap beatmap;
 
 // Initialized at the right end of the screen
 Vector2 notePosition = { 800.0f, 50.0f };
@@ -25,9 +37,72 @@ void StartOsuFileProcessing(char* fileName) {
 
     while(fgets(line, 512, filePointer)) {
 
-        if(strstr(line, "[HitObjects]") || hitObjectsSwitch) {
+        if(strstr(line, "[General]")) {
+            sectionSwitch = General;
+            continue;
+        }
+        else if(strstr(line, "[Metadata]")) {
+            sectionSwitch = Metadata;
+            continue;
+        }
+        else if(strstr(line, "[Difficulty]")) {
+            sectionSwitch = Difficulty;
+            continue;
+        }
+        else if(strstr(line, "[Events]")) {
+            sectionSwitch = Events;
+            continue;
+        }
+        else if(strstr(line, "[TimingPoints]")) {
+            sectionSwitch = TimingPoints;
+            continue;
+        }
+        else if(strstr(line, "[HitObjects]")) {
+            sectionSwitch = HitObjects;
+            continue;
+        }
 
-            if(hitObjectsSwitch) {
+        if(strstr(line, "AudioFilename: ") && sectionSwitch == General) {
+
+            char* spaceSeperator = strtok(line, " ");
+            spaceSeperator = strtok(NULL, " ");
+            spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
+
+            char* audioName = malloc(strlen(spaceSeperator) + 1);
+            strcpy(audioName, spaceSeperator);
+            beatmap.audioFileName = audioName;
+        }
+        else if(sectionSwitch == Metadata) {
+            if (strstr(line, "Title:")) {
+                beatmap.title = GetBeatmapInfoString(line);
+            } else if (strstr(line, "Artist:")) {
+                beatmap.artist = GetBeatmapInfoString(line);
+            } else if (strstr(line, "Version:")) {
+                beatmap.difficultyName = GetBeatmapInfoString(line);
+            }
+        }
+        else if(sectionSwitch == Events) {
+            if(strstr(line, "0,0,")) {
+
+                char* spaceSeperator = strtok(line, "\"");
+                spaceSeperator = strtok(NULL, "\"");
+
+                char* backgroundName = malloc(strlen(spaceSeperator) + 1);
+                strcpy(backgroundName, spaceSeperator);
+
+                beatmap.backgroundFileName = backgroundName;
+            }
+        }
+        else if(sectionSwitch == Difficulty) {
+            if(strstr(line, "HPDrainRate:")) {
+                beatmap.hpDrain = GetBeatmapInfoInt(line);
+            }
+            else if(strstr(line, "OverallDifficulty:")) {
+                beatmap.od = GetBeatmapInfoInt(line);
+            }
+        }
+        // Filling info about hitobjects
+        if(sectionSwitch == HitObjects) {
 
                 char* commaSection = strtok(line, ",");
                 commaSection = strtok(NULL, ",");
@@ -52,9 +127,28 @@ void StartOsuFileProcessing(char* fileName) {
 
                 Notes[noteCounter].noteColor = Notes[noteCounter].isBlue?BLUE:RED;
                 noteCounter++;
-            } 
-            hitObjectsSwitch = 1; // We hit the HitObjects line
         }
     }
     fclose(filePointer);
+}
+
+int GetBeatmapInfoInt(char* line) {
+
+    char* spaceSeperator = strtok(line, ":");
+    spaceSeperator = strtok(NULL, ":");
+    spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
+
+    return strtol(spaceSeperator, NULL, 10);
+}
+
+char* GetBeatmapInfoString(char* line) {
+
+    char* spaceSeperator = strtok(line, ":");
+    spaceSeperator = strtok(NULL, ":");
+    spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
+
+    char* returnString = malloc(strlen(spaceSeperator) + 1);
+    strcpy(returnString, spaceSeperator);
+
+    return returnString;
 }

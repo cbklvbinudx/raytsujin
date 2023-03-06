@@ -10,3 +10,13 @@ typedef struct Note {
     int isPressed;
     Color noteColor;
 } Note;
+
+typedef struct Beatmap {
+    char* title;
+    char* artist;
+    char* difficultyName;
+    char* audioFileName;
+    int hpDrain;
+    int od;
+    char* backgroundFileName;
+} Beatmap;
