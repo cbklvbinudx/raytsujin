@@ -19,7 +19,7 @@ void DrawMainMenu() {
                                 "Drop a file with the .osu extension on the window to play!;");
 
     if(isFileProcessed) {
-        DrawText(TextFormat("Currently loaded file: %s", extractedFilePath), 100, 100, 13, BLACK);
+        DrawText(TextFormat("Currently loaded file: %s", GetFileNameWithoutExt(extractedFilePath)), 2, 0, 20, GRAY);
     }
 
     EndDrawing();
@@ -43,14 +43,14 @@ void UpdateMainMenu() {
                 StartOsuFileProcessing(extractedFilePath);
 
                 char *mapAudioBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName)); // Causes a memory leak :D
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 1); // Causes a memory leak :D
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapAudioBuffer, "\\");
                 strcat(mapAudioBuffer, beatmap.audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName)); // Causes a memory leak :D
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1); // Causes a memory leak :D
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapBackgroundBuffer, "\\");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
