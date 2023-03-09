@@ -9,6 +9,7 @@ void DrawPlayfield();
 void SendNote(Note taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
+void ResetGameplayVariables();
 
 float songTimeElapsed;
 
@@ -51,6 +52,8 @@ int main() {
     InitWindow(screenWidth, screenHeight, "raytsujin");
     icon = LoadImage("resources/teri.png"); // TODO: Change this icon to something more fitting
     SetWindowIcon(icon);
+
+    SetExitKey(KEY_NULL);
 
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
     taikoHit = LoadTexture("resources/taiko-hit300.png");
@@ -118,7 +121,9 @@ void DrawElementsPlaying() {
 }
 
 void DrawPlayfield() {
-    DrawTexture(mapBackground, 0, 0, WHITE);
+    DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
+                   (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
+                   WHITE);
     DrawRectangleGradientH(0, 0, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
     DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
     DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK); // The destination circle
@@ -219,6 +224,13 @@ void UpdateGamePlaying() {
     if(IsKeyPressed(KEY_GRAVE)) {
         RetryButton();
     }
+    if(IsKeyPressed(KEY_ESCAPE) && gameStateSwitch == Playing) {
+        StopMusicStream(mapAudio);
+        gameStateSwitch = Menu;
+        lastGameState = Menu;
+
+        ResetGameplayVariables();
+    }
 }
 
 void RetryButton() {
@@ -226,17 +238,22 @@ void RetryButton() {
         StopMusicStream(mapAudio);
         PlayMusicStream(mapAudio);
 
-        for(int i = 0; i < noteCounter; i++) {
-            Notes[i].isPressed = 0;
-            Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
-        }
-
-        comboCounter = 0;
-        missCounter = 0;
-        hitCounter = 0;
-        isMiss = 0;
-        isHit = 0;
-        lastNoteTiming = 0;
-        currentNote = 0;
+        ResetGameplayVariables();
     }
+}
+
+void ResetGameplayVariables() {
+
+    for(int i = 0; i < noteCounter; i++) {
+        Notes[i].isPressed = 0;
+        Notes[i].noteColor = Notes[i].isBlue?BLUE:RED;
+    }
+
+    comboCounter = 0;
+    missCounter = 0;
+    hitCounter = 0;
+    isMiss = 0;
+    isHit = 0;
+    lastNoteTiming = 0;
+    currentNote = 0;
 }

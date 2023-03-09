@@ -15,11 +15,19 @@ void DrawMainMenu() {
 
     ClearBackground(RAYWHITE);
 
-    gameStateSwitch = GuiButton((Rectangle){ screenWidth / 3, screenWidth / 7 , screenWidth / 3, screenHeight / 7 },
-                                "Drop a file with the .osu extension on the window to play!;");
+    DrawTextEx(GetFontDefault(), "RAYTSUJIN",
+               (Vector2) { screenWidth / 2 - MeasureTextEx(GetFontDefault(), "RAYTSUJIN", 172, 2).x / 2,
+                           screenHeight / 2 - MeasureTextEx(GetFontDefault(), "RAYTSUJIN", 172, 2).y / 2 }, 172, 2,
+               GRAY);
+
+    GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2 , screenWidth / 3, screenHeight / 7 },
+                                "Drop a file with the .osu extension on the window to play!");
 
     if(isFileProcessed) {
         DrawText(TextFormat("Currently loaded file: %s", GetFileNameWithoutExt(extractedFilePath)), 2, 0, 20, GRAY);
+
+        gameStateSwitch = GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2, screenWidth / 3, screenHeight / 7 },
+                                    "File loaded! Press this button or ENTER to play.");
     }
 
     EndDrawing();
@@ -28,6 +36,9 @@ void DrawMainMenu() {
 void UpdateMainMenu() {
     if(IsKeyPressed(KEY_ENTER)) {
         gameStateSwitch = Playing;
+    }
+    if(IsKeyPressed(KEY_ESCAPE)) {
+        SetExitKey(KEY_ESCAPE);
     }
     if(IsFileDropped()) {
         droppedFiles = LoadDroppedFiles();
