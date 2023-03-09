@@ -3,8 +3,6 @@
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
-#include <stdlib.h>
-#include <string.h>
 
 void DrawElementsPlaying();
 void DrawPlayfield();
@@ -36,11 +34,6 @@ const float hitWindow = 100.0f;
 const int screenWidth = 1600;
 const int screenHeight = 900;
 
-const char* songsDirectory = "resources/Songs/";
-char* pathToMap = "1610611 100 gecs - sympathy 4 the grinch/";
-char* pathToDifficulty = "100 gecs - sympathy 4 the grinch (clockbite) [Muzukashii].osu";
-char* fullMapPath;
-
 Sound redSound;
 Sound blueSound;
 Sound comboBreak;
@@ -66,27 +59,6 @@ int main() {
     blueSound = LoadSound("resources/drum-hitclap.wav");
     comboBreak = LoadSound("resources/combobreak.wav");
 
-    char* mapPathBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(pathToDifficulty));
-    strcpy(mapPathBuffer, songsDirectory);
-    strcat(mapPathBuffer, pathToMap);
-    strcat(mapPathBuffer, pathToDifficulty);
-    fullMapPath = mapPathBuffer;
-
-    StartOsuFileProcessing(fullMapPath);
-
-    char* mapAudioBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(beatmap.audioFileName));
-    strcpy(mapAudioBuffer, songsDirectory);
-    strcat(mapAudioBuffer, pathToMap);
-    strcat(mapAudioBuffer, beatmap.audioFileName);
-
-    mapAudio = LoadMusicStream(mapAudioBuffer);
-
-    char* mapBackgroundBuffer = malloc(strlen(songsDirectory) + strlen(pathToMap) + strlen(beatmap.backgroundFileName) + 1);
-    strcpy(mapBackgroundBuffer, songsDirectory);
-    strcat(mapBackgroundBuffer, pathToMap);
-    strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
-    mapBackground = LoadTexture(mapBackgroundBuffer);
-
     while(!WindowShouldClose()) {
         if(gameStateSwitch == Menu) {
             DrawMainMenu();
@@ -111,12 +83,6 @@ int main() {
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
 
-    free(beatmap.audioFileName);
-    free(beatmap.backgroundFileName);
-    free(mapPathBuffer);
-    free(mapBackgroundBuffer);
-    free(mapAudioBuffer);
-
     CloseWindow();
 
     return 0;
@@ -132,7 +98,7 @@ void DrawElementsPlaying() {
     {
         SendNote(Notes[i]);
 
-        Notes[i].position.x = 100 + Notes[i].timing - songTimeElapsed;
+        Notes[i].position.x = scrollFieldHeight + Notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
     }    
 
     if(isMiss && songTimeElapsed - lastNoteTiming < 300) {
@@ -155,8 +121,7 @@ void DrawPlayfield() {
     DrawTexture(mapBackground, 0, 0, WHITE);
     DrawRectangleGradientH(0, 0, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
     DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
-    DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK);
-
+    DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
 void SendNote(Note taikoNote) {
@@ -164,7 +129,7 @@ void SendNote(Note taikoNote) {
 }
 
 void UpdateGamePlaying() {
-    int timingProper = Notes[currentNote].timing + 100;
+    int timingProper = Notes[currentNote].timing + scrollFieldHeight; // Offset by the diameter of the destination circle
 
     deltaPress = fabsf(timingProper - songTimeElapsed);
 

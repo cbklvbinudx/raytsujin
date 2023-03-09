@@ -1,6 +1,10 @@
 #pragma once
 #include "raylib.h"
 
+extern char* extractedFilePath;
+extern Music mapAudio;
+extern Texture2D mapBackground;
+
 typedef struct Note {
     Vector2 position;
     int sliderVelocity;
