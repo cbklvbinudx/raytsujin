@@ -54,18 +54,20 @@ void UpdateMainMenu() {
                 StartOsuFileProcessing(extractedFilePath);
 
                 char *mapAudioBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 1); // Causes a memory leak :D
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 1);
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapAudioBuffer, "\\");
                 strcat(mapAudioBuffer, beatmap.audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
+                free(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1); // Causes a memory leak :D
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1);
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapBackgroundBuffer, "\\");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
                 mapBackground = LoadTexture(mapBackgroundBuffer);
+                free(mapBackgroundBuffer);
 
                 previousExtractedFilePath = droppedFiles.paths[0];
                 isFileProcessed = 1;

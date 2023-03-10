@@ -3,13 +3,13 @@
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
+#include <stdlib.h>
 
 void DrawElementsPlaying();
 void DrawPlayfield();
 void SendNote(Note taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
-void ResetGameplayVariables();
 
 float songTimeElapsed;
 
@@ -85,6 +85,8 @@ int main() {
     UnloadTexture(mapBackground);
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
+
+    FreeBeatmapMemory();
 
     CloseWindow();
 
@@ -256,4 +258,12 @@ void ResetGameplayVariables() {
     isHit = 0;
     lastNoteTiming = 0;
     currentNote = 0;
+}
+
+void FreeBeatmapMemory() {
+    free(beatmap.audioFileName);
+    free(beatmap.backgroundFileName);
+    free(beatmap.difficultyName);
+    free(beatmap.artist);
+    free(beatmap.title);
 }

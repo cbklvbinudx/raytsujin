@@ -8,7 +8,9 @@ extern const int screenHeight;
 enum GameState {
     Menu,
     Playing,
-    Paused,
     Failed,
     Finished,
 };
+
+void ResetGameplayVariables();
+void FreeBeatmapMemory();
