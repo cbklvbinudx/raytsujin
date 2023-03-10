@@ -59,7 +59,6 @@ void UpdateMainMenu() {
                 strcat(mapAudioBuffer, "\\");
                 strcat(mapAudioBuffer, beatmap.audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
-                free(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
                         strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1);
@@ -67,7 +66,6 @@ void UpdateMainMenu() {
                 strcat(mapBackgroundBuffer, "\\");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
                 mapBackground = LoadTexture(mapBackgroundBuffer);
-                free(mapBackgroundBuffer);
 
                 previousExtractedFilePath = droppedFiles.paths[0];
                 isFileProcessed = 1;
