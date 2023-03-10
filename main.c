@@ -4,6 +4,7 @@
 #include "config.h"
 #include <math.h>
 #include <stdlib.h>
+#include "finishScreen.h"
 
 void DrawElementsPlaying();
 void DrawPlayfield();
@@ -42,7 +43,7 @@ Music mapAudio;
 
 Image icon;
 
-int gameStateSwitch = 0;
+int gameStateSwitch = Menu; // Starting in the menu
 int lastGameState = 0;
 
 int main() {
@@ -72,11 +73,23 @@ int main() {
             if(lastGameState != Playing) {
                 PlayMusicStream(mapAudio);
             }
-            songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000;
+            if(GetMusicTimePlayed(mapAudio) > GetMusicTimeLength(mapAudio) - 0.01) {
+                gameStateSwitch = Finished;
+            }
+            songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000; // Time played in milliseconds, for use with .osu file timing
             lastGameState = Playing;
             UpdateMusicStream(mapAudio);
             UpdateGamePlaying();
             DrawElementsPlaying();
+        }
+        else if(gameStateSwitch == Finished) {
+            DrawFinishScreen();
+            UpdateFinishScreen();
+            if(lastGameState != Finished) {
+                ResetGameplayVariables();
+                StopMusicStream(mapAudio);
+            }
+            lastGameState = Finished;
         }
     }
 
@@ -85,6 +98,7 @@ int main() {
     UnloadTexture(mapBackground);
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
+    UnloadMusicStream(mapAudio);
 
     FreeBeatmapMemory();
 
