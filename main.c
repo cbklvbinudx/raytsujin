@@ -86,7 +86,6 @@ int main() {
             DrawFinishScreen();
             UpdateFinishScreen();
             if(lastGameState != Finished) {
-                ResetGameplayVariables();
                 StopMusicStream(mapAudio);
             }
             lastGameState = Finished;
