@@ -97,6 +97,11 @@ int main() {
     UnloadTexture(mapBackground);
     UnloadTexture(taikoHit);
     UnloadTexture(taikoMiss);
+    UnloadImage(icon);
+
+    UnloadSound(redSound);
+    UnloadSound(blueSound);
+    UnloadSound(comboBreak);
     UnloadMusicStream(mapAudio);
 
     FreeBeatmapMemory();
