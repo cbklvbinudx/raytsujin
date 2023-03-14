@@ -27,12 +27,14 @@ int currentNote = 0;
 float deltaPress = 0;
 
 int comboCounter = 0;
-int hitCounter = 0;
 int missCounter = 0;
+int goodCounter = 0;
+int greatCounter = 0;
 
 Texture2D mapBackground;
 Texture2D taikoMiss;
-Texture2D taikoHit;
+Texture2D taikoGood;
+Texture2D taikoGreat;
 
 float scrollFieldHeight = 100.0f; // Support for numbers different than 100 doesn't really work yet
 const float scrollFieldOffset = 50.0f;
@@ -64,7 +66,8 @@ int main() {
     SetExitKey(KEY_NULL);
 
     taikoMiss = LoadTexture("resources/taiko-hit0.png");
-    taikoHit = LoadTexture("resources/taiko-hit300.png");
+    taikoGood = LoadTexture("resources/taiko-hit100.png");
+    taikoGreat = LoadTexture("resources/taiko-hit300.png");
 
     redSound = LoadSound("resources/drum-hitfinish.wav");
     blueSound = LoadSound("resources/drum-hitclap.wav");
@@ -102,7 +105,7 @@ int main() {
     CloseAudioDevice();
 
     UnloadTexture(mapBackground);
-    UnloadTexture(taikoHit);
+    UnloadTexture(taikoGreat);
     UnloadTexture(taikoMiss);
     UnloadImage(icon);
 
@@ -135,13 +138,17 @@ void DrawElementsPlaying() {
         DrawTexture(taikoMiss, -70, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
     if(judgementSwitch == Great && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoHit, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoGreat, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
+    }
+    if(judgementSwitch == Good && songTimeElapsed - lastNoteTiming < 300) {
+        DrawTexture(taikoGood, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("Misses: %i", missCounter), 2, screenHeight - 80, 16, BLACK);
-    DrawText(TextFormat("Hits: %i", hitCounter), 2, screenHeight - 60, 16, BLACK);
+    DrawText(TextFormat("Misses: %i", missCounter), 2, screenHeight - 100, 16, BLACK);
+    DrawText(TextFormat("Good: %i", goodCounter), 2, screenHeight - 80, 16, BLACK);
+    DrawText(TextFormat("Great: %i", greatCounter), 2, screenHeight - 60, 16, BLACK);
     DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, BLACK);
 
     EndDrawing();
@@ -152,7 +159,7 @@ void DrawPlayfield() {
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
-    DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
+    DrawRectangleGradientV(0, screenHeight - 120, 100, 120, LIGHTGRAY, GRAY);
     DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
@@ -185,11 +192,16 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = Fade(BLUE, 0.4f);
 
             lastNoteTiming = timingProper;
-            judgementSwitch = Great;
+            if(deltaPress < hitWindow - 33) {
+                judgementSwitch = Great;
+                greatCounter++;
+            } else {
+                judgementSwitch = Good;
+                goodCounter++;
+            }
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
-            hitCounter++;
         } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
@@ -213,11 +225,16 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = Fade(RED, 0.4f);
 
             lastNoteTiming = timingProper;
-            judgementSwitch = Great;
+            if(deltaPress < hitWindow - 33) {
+                judgementSwitch = Great;
+                greatCounter++;
+            } else {
+                judgementSwitch = Good;
+                goodCounter++;
+            }
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
-            hitCounter++;
         } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
@@ -279,7 +296,8 @@ void ResetGameplayVariables() {
 
     comboCounter = 0;
     missCounter = 0;
-    hitCounter = 0;
+    goodCounter = 0;
+    greatCounter = 0;
     judgementSwitch = Unhit;
     lastNoteTiming = 0;
     currentNote = 0;
