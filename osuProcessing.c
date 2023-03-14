@@ -121,9 +121,18 @@ void StartOsuFileProcessing(char* fileName) {
 
                 if(*commaSection == '0') {
                     Notes[noteCounter].isBlue = 0;
+                    Notes[noteCounter].bigNote = 0;
+                }
+                else if(*commaSection == '4') {
+                    Notes[noteCounter].isBlue = 0;
+                    Notes[noteCounter].bigNote = 1;
+                } else if(*commaSection == '8' || strcmp(commaSection, "12") == 0) {
+                    Notes[noteCounter].isBlue = 1;
+                    Notes[noteCounter].bigNote = 1;
                 }
                 else {
                     Notes[noteCounter].isBlue = 1;
+                    Notes[noteCounter].bigNote = 0;
                 }
 
                 Notes[noteCounter].noteColor = Notes[noteCounter].isBlue?BLUE:RED;

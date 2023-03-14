@@ -151,7 +151,11 @@ void DrawPlayfield() {
 }
 
 void SendNote(Note taikoNote) {
-    DrawCircleV(taikoNote.position, scrollFieldHeight / 2, taikoNote.noteColor);
+    if(taikoNote.bigNote) {
+        DrawCircleV(taikoNote.position, scrollFieldHeight / 2 + 15, taikoNote.noteColor);
+    } else {
+        DrawCircleV(taikoNote.position, scrollFieldHeight / 2, taikoNote.noteColor);
+    }
 }
 
 void UpdateGamePlaying() {
