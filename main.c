@@ -12,12 +12,17 @@ void SendNote(Note taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
 
+enum Judgements {
+    Great,
+    Good,
+    Miss,
+    Unhit,
+};
+
 float songTimeElapsed;
 
 int wasPressedLastFrame = 0;
-int lastNoteTiming = 0; // Used for hit feedback images (miss, hit)
-int isMiss = 0;
-int isHit = 0; // TODO: 100s and 300s
+int lastNoteTiming = 0; // Used for judgement feedback images (hit, miss)
 int currentNote = 0;
 float deltaPress = 0;
 
@@ -46,6 +51,7 @@ Image icon;
 
 int gameStateSwitch = Menu; // Starting in the menu
 int lastGameState = 0;
+int judgementSwitch = Unhit;
 
 int main() {
 
@@ -125,10 +131,10 @@ void DrawElementsPlaying() {
         Notes[i].position.x = scrollFieldHeight + Notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
     }    
 
-    if(isMiss && songTimeElapsed - lastNoteTiming < 300) {
+    if(judgementSwitch == Miss && songTimeElapsed - lastNoteTiming < 300) {
         DrawTexture(taikoMiss, -70, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
-    if(isHit && songTimeElapsed - lastNoteTiming < 300) {
+    if(judgementSwitch == Great && songTimeElapsed - lastNoteTiming < 300) {
         DrawTexture(taikoHit, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
@@ -169,6 +175,7 @@ void UpdateGamePlaying() {
         PlaySound(comboBreak);
         currentNote++;
         missCounter++;
+        judgementSwitch = Miss;
     }
     // Blue note logic
     else if(Notes[currentNote].isBlue) {
@@ -178,8 +185,7 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = Fade(BLUE, 0.4f);
 
             lastNoteTiming = timingProper;
-            isMiss = 0;
-            isHit = 1;
+            judgementSwitch = Great;
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
@@ -193,8 +199,7 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = BLANK;
 
             lastNoteTiming = timingProper;
-            isMiss = 1;
-            isHit = 0;
+            judgementSwitch = Miss;
             comboCounter = 0;
             wasPressedLastFrame = 1;
             currentNote++;
@@ -208,8 +213,7 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = Fade(RED, 0.4f);
 
             lastNoteTiming = timingProper;
-            isMiss = 0;
-            isHit = 1;
+            judgementSwitch = Great;
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
@@ -223,8 +227,7 @@ void UpdateGamePlaying() {
             Notes[currentNote].noteColor = BLANK;
 
             lastNoteTiming = timingProper;
-            isMiss = 1;
-            isHit = 0;
+            judgementSwitch = Miss;
             comboCounter = 0;
             wasPressedLastFrame = 1;
             currentNote++;
@@ -277,8 +280,7 @@ void ResetGameplayVariables() {
     comboCounter = 0;
     missCounter = 0;
     hitCounter = 0;
-    isMiss = 0;
-    isHit = 0;
+    judgementSwitch = Unhit;
     lastNoteTiming = 0;
     currentNote = 0;
 }
