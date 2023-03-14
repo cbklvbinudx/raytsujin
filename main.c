@@ -30,6 +30,7 @@ Texture2D taikoMiss;
 Texture2D taikoHit;
 
 float scrollFieldHeight = 100.0f; // Support for numbers different than 100 doesn't really work yet
+const float scrollFieldOffset = 50.0f;
 
 const float hitWindow = 100.0f;
 
@@ -125,10 +126,10 @@ void DrawElementsPlaying() {
     }    
 
     if(isMiss && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoMiss, -70, -50, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoMiss, -70, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
     if(isHit && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoHit, -90, -40, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoHit, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
 
@@ -144,9 +145,9 @@ void DrawPlayfield() {
     DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
-    DrawRectangleGradientH(0, 0, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
+    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
     DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
-    DrawCircle(50, scrollFieldHeight / 2, scrollFieldHeight / 2, BLACK); // The destination circle
+    DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
 void SendNote(Note taikoNote) {

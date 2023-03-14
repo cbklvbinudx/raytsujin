@@ -4,7 +4,6 @@
 
 extern int noteCounter;
 extern Note Notes[512];
-extern Vector2 notePosition;
 extern Beatmap beatmap;
 
 void StartOsuFileProcessing(char* filename);

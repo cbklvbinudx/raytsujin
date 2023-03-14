@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "osuProcessing.h"
+#include "config.h"
 
 int noteCounter = 0;
 Note Notes[512] = { 0 }; // TODO: Make the size dynamic
@@ -21,9 +22,6 @@ int sectionSwitch = 0;
 
 Beatmap beatmap;
 
-// Initialized at the right end of the screen
-Vector2 notePosition = { 800.0f, 50.0f };
-
 void StartOsuFileProcessing(char* fileName) {
     FILE* filePointer;
 
@@ -34,6 +32,9 @@ void StartOsuFileProcessing(char* fileName) {
     if(!filePointer) {
         noteCounter = -1;
     }
+
+    // Initialized at the right end of the screen
+    Vector2 notePosition = { 800.0f, 50.0f + scrollFieldOffset };
 
     while(fgets(line, 512, filePointer)) {
 
