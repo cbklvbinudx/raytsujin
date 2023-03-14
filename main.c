@@ -145,7 +145,7 @@ void DrawPlayfield() {
     DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
-    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, LIGHTGRAY, BLACK);
+    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawRectangleGradientV(0, screenHeight - 100, 100, 100, LIGHTGRAY, GRAY);
     DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
@@ -171,7 +171,7 @@ void UpdateGamePlaying() {
         if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If note is hit
             Notes[currentNote].isPressed = 1;
-            Notes[currentNote].noteColor = Fade(BLUE, 0.1f);
+            Notes[currentNote].noteColor = Fade(BLUE, 0.4f);
 
             lastNoteTiming = timingProper;
             isMiss = 0;
@@ -201,7 +201,7 @@ void UpdateGamePlaying() {
         if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && Notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If note is hit
             Notes[currentNote].isPressed = 1;
-            Notes[currentNote].noteColor = Fade(RED, 0.1f);
+            Notes[currentNote].noteColor = Fade(RED, 0.4f);
 
             lastNoteTiming = timingProper;
             isMiss = 0;
