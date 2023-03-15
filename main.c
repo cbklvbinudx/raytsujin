@@ -8,7 +8,7 @@
 
 void DrawElementsPlaying();
 void DrawPlayfield();
-void SendNote(Note taikoNote);
+void SendNote(Note* taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
 
@@ -129,7 +129,7 @@ void DrawElementsPlaying() {
 
     for (int i = 0; i < noteCounter; i++)
     {
-        SendNote(Notes[i]);
+        SendNote(&Notes[i]);
 
         Notes[i].position.x = scrollFieldHeight + Notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
     }    
@@ -163,13 +163,14 @@ void DrawPlayfield() {
     DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
-void SendNote(Note taikoNote) {
-    if(taikoNote.bigNote) {
-        DrawCircleV(taikoNote.position, scrollFieldHeight / 2 + 15, taikoNote.noteColor);
-        DrawCircleLines(taikoNote.position.x, taikoNote.position.y, scrollFieldHeight / 2 + 15, BLACK);
+void SendNote(Note* taikoNote) {
+    if(taikoNote->bigNote) {
+        DrawCircleV(taikoNote->position, scrollFieldHeight / 2 + 15, taikoNote->noteColor);
+        DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2 + 15, BLACK);
+
     } else {
-        DrawCircleV(taikoNote.position, scrollFieldHeight / 2, taikoNote.noteColor);
-        DrawCircleLines(taikoNote.position.x, taikoNote.position.y, scrollFieldHeight / 2, BLACK);
+        DrawCircleV(taikoNote->position, scrollFieldHeight / 2, taikoNote->noteColor);
+        DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2, BLACK);
     }
 }
 
