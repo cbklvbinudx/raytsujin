@@ -56,14 +56,14 @@ void UpdateMainMenu() {
                 char *mapAudioBuffer = malloc(
                         strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 1);
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
-                strcat(mapAudioBuffer, "\\");
+                strcat(mapAudioBuffer, "/");
                 strcat(mapAudioBuffer, beatmap.audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
                         strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1);
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
-                strcat(mapBackgroundBuffer, "\\");
+                strcat(mapBackgroundBuffer, "/");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
                 mapBackground = LoadTexture(mapBackgroundBuffer);
 
