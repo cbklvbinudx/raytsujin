@@ -69,6 +69,10 @@ void StartOsuFileProcessing(char* fileName) {
             spaceSeperator = strtok(NULL, " ");
             spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
 
+#if defined(__linux__)
+            spaceSeperator[strlen(spaceSeperator) - 1] = '\0'; // Linux detects two line endings here, so we have to strip another one
+#endif
+
             char* audioName = malloc(strlen(spaceSeperator) + 1);
             strcpy(audioName, spaceSeperator);
             beatmap.audioFileName = audioName;
