@@ -57,6 +57,9 @@ void UpdateMainMenu() {
 
             if(strcmp(previousExtractedFilePath, extractedFilePath) != 0 && isFileProcessed) {
                 isFileProcessed = 0;
+                ResetGameplayVariables();
+                noteCounter = 0;
+                FreeBeatmapMemory();
             }
 
             if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {

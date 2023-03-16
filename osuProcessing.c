@@ -9,7 +9,7 @@
 int noteCounter = 0;
 Note Notes[512] = { 0 }; // TODO: Make the size dynamic
 
-enum sectionName {
+enum SectionEnum {
     General,
     Metadata,
     Difficulty,
@@ -18,7 +18,7 @@ enum sectionName {
     HitObjects,
 };
 
-int sectionSwitch = 0;
+int currentSection = 0;
 
 Beatmap beatmap;
 
@@ -39,31 +39,31 @@ void StartOsuFileProcessing(char* fileName) {
     while(fgets(line, 512, filePointer)) {
 
         if(strstr(line, "[General]")) {
-            sectionSwitch = General;
+            currentSection = General;
             continue;
         }
         else if(strstr(line, "[Metadata]")) {
-            sectionSwitch = Metadata;
+            currentSection = Metadata;
             continue;
         }
         else if(strstr(line, "[Difficulty]")) {
-            sectionSwitch = Difficulty;
+            currentSection = Difficulty;
             continue;
         }
         else if(strstr(line, "[Events]")) {
-            sectionSwitch = Events;
+            currentSection = Events;
             continue;
         }
         else if(strstr(line, "[TimingPoints]")) {
-            sectionSwitch = TimingPoints;
+            currentSection = TimingPoints;
             continue;
         }
         else if(strstr(line, "[HitObjects]")) {
-            sectionSwitch = HitObjects;
+            currentSection = HitObjects;
             continue;
         }
 
-        if(strstr(line, "AudioFilename: ") && sectionSwitch == General) {
+        if(strstr(line, "AudioFilename: ") && currentSection == General) {
 
             char* spaceSeperator = strtok(line, " ");
             spaceSeperator = strtok(NULL, " ");
@@ -73,7 +73,7 @@ void StartOsuFileProcessing(char* fileName) {
             strcpy(audioName, spaceSeperator);
             beatmap.audioFileName = audioName;
         }
-        else if(sectionSwitch == Metadata) {
+        else if(currentSection == Metadata) {
             if (strstr(line, "Title:")) {
                 beatmap.title = GetBeatmapInfoString(line);
             } else if (strstr(line, "Artist:")) {
@@ -82,7 +82,7 @@ void StartOsuFileProcessing(char* fileName) {
                 beatmap.difficultyName = GetBeatmapInfoString(line);
             }
         }
-        else if(sectionSwitch == Events) {
+        else if(currentSection == Events) {
             if(strstr(line, "0,0,")) {
 
                 char* spaceSeperator = strtok(line, "\"");
@@ -94,7 +94,7 @@ void StartOsuFileProcessing(char* fileName) {
                 beatmap.backgroundFileName = backgroundName;
             }
         }
-        else if(sectionSwitch == Difficulty) {
+        else if(currentSection == Difficulty) {
             if(strstr(line, "HPDrainRate:")) {
                 beatmap.hpDrain = GetBeatmapInfoInt(line);
             }
@@ -103,7 +103,7 @@ void StartOsuFileProcessing(char* fileName) {
             }
         }
         // Filling info about hitobjects
-        if(sectionSwitch == HitObjects) {
+        if(currentSection == HitObjects) {
 
                 char* commaSection = strtok(line, ",");
                 commaSection = strtok(NULL, ",");
@@ -140,6 +140,7 @@ void StartOsuFileProcessing(char* fileName) {
         }
     }
     fclose(filePointer);
+    currentSection = 0;
 }
 
 int GetBeatmapInfoInt(char* line) {
