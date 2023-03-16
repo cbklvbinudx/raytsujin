@@ -8,7 +8,7 @@
 
 void DrawElementsPlaying();
 void DrawPlayfield();
-void SendNote(Note* taikoNote);
+void DrawNote(Note* taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
 
@@ -129,7 +129,7 @@ void DrawElementsPlaying() {
 
     for (int i = 0; i < noteCounter; i++)
     {
-        SendNote(&Notes[i]);
+        DrawNote(&Notes[i]);
 
         Notes[i].position.x = scrollFieldHeight + Notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
     }    
@@ -159,11 +159,11 @@ void DrawPlayfield() {
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
-    DrawRectangleGradientV(0, screenHeight - 120, 100, 120, BLANK, Fade(BLACK, 0.8f));
+    DrawCircleGradient(0, screenHeight, 150, BLACK, BLANK);
     DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
-void SendNote(Note* taikoNote) {
+void DrawNote(Note* taikoNote) {
     if(taikoNote->bigNote) {
         DrawCircleV(taikoNote->position, scrollFieldHeight / 2 + 15, taikoNote->noteColor);
         DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2 + 15, BLACK);
