@@ -27,6 +27,9 @@ void DrawFinishScreen() {
 }
 
 void UpdateFinishScreen() {
-    if(backButtonSwitch) gameStateSwitch = Menu;
+    if(backButtonSwitch) {
+        ResetGameplayVariables();
+        gameStateSwitch = Menu;
+    };
     if(IsKeyPressed(KEY_ESCAPE)) gameStateSwitch = Menu;
 }
