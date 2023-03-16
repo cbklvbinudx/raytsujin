@@ -13,18 +13,21 @@ int isFileProcessed = 0;
 void DrawMainMenu() {
     BeginDrawing();
 
-    ClearBackground(RAYWHITE);
+    ClearBackground(WHITE);
+    DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
+                   (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
+                   WHITE);
 
-    DrawTextEx(GetFontDefault(), "RAYTSUJIN",
-               (Vector2) { screenWidth / 2 - MeasureTextEx(GetFontDefault(), "RAYTSUJIN", 172, 2).x / 2,
-                           screenHeight / 2 - MeasureTextEx(GetFontDefault(), "RAYTSUJIN", 172, 2).y / 2 }, 172, 2,
-               GRAY);
+    DrawTextEx(GetFontDefault(), "RAYTSUJIN",(Vector2) { 10,screenHeight - 86 }, 100, 8,GRAY);
+
+    DrawRectangleGradientV(0, 0, screenWidth, screenHeight, BLACK, BLANK);
 
     GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2 , screenWidth / 3, screenHeight / 7 },
                                 "Drop a file with the .osu extension on the window to play!");
 
     if(isFileProcessed) {
-        DrawText(TextFormat("Currently loaded file: %s", GetFileNameWithoutExt(extractedFilePath)), 2, 0, 20, GRAY);
+
+        DrawText(TextFormat("Currently loaded file: %s", GetFileNameWithoutExt(extractedFilePath)), 2, 2, 20, GRAY);
 
         gameStateSwitch = GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2, screenWidth / 3, screenHeight / 7 },
                                     "File loaded! Press this button or ENTER to play.");
