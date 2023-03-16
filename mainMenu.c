@@ -60,6 +60,8 @@ void UpdateMainMenu() {
                 ResetGameplayVariables();
                 noteCounter = 0;
                 FreeBeatmapMemory();
+                UnloadTexture(mapBackground);
+                UnloadMusicStream(mapAudio);
             }
 
             if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
@@ -77,7 +79,12 @@ void UpdateMainMenu() {
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapBackgroundBuffer, "/");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
-                mapBackground = LoadTexture(mapBackgroundBuffer);
+
+                Image mapBackgroundImage = LoadImage(mapBackgroundBuffer);
+                ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
+
+                mapBackground = LoadTextureFromImage(mapBackgroundImage);
+                UnloadImage(mapBackgroundImage);
 
                 char* previousExtractedFilePathBuffer = malloc(strlen(droppedFiles.paths[0]) + 1);
                 strcpy(previousExtractedFilePathBuffer, droppedFiles.paths[0]);
