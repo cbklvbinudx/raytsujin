@@ -2,6 +2,7 @@
 #include "raylib.h"
 
 extern char* extractedFilePath;
+extern char* previousExtractedFilePath;
 extern Music mapAudio;
 extern Texture2D mapBackground;
 

@@ -115,6 +115,8 @@ int main() {
     UnloadMusicStream(mapAudio);
 
     FreeBeatmapMemory();
+    free(extractedFilePath);
+    free(previousExtractedFilePath);
 
     CloseWindow();
 
