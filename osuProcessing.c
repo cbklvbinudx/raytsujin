@@ -6,8 +6,8 @@
 #include "osuProcessing.h"
 #include "config.h"
 
-int noteCounter = 0;
-Note Notes[512] = { 0 }; // TODO: Make the size dynamic
+int noteCount = 0;
+Note *notes = NULL;
 
 enum SectionEnum {
     General,
@@ -20,9 +20,10 @@ enum SectionEnum {
 
 int currentSection = 0;
 
-Beatmap beatmap;
+Beatmap* currentBeatmap;
 
-void StartOsuFileProcessing(char* fileName) {
+Beatmap* LoadBeatmapFromFile(char* fileName) {
+    Beatmap* beatmap = malloc(sizeof(Beatmap));
     FILE* filePointer;
 
     char line[512] = { 0 };
@@ -30,7 +31,11 @@ void StartOsuFileProcessing(char* fileName) {
     filePointer = fopen(fileName, "r");
 
     if(!filePointer) {
-        noteCounter = -1;
+        noteCount = -1;
+    }
+
+    if(notes == NULL) {
+        notes = malloc(20000 * sizeof(Note));
     }
 
     // Initialized at the right end of the screen
@@ -75,15 +80,15 @@ void StartOsuFileProcessing(char* fileName) {
 
             char* audioName = malloc(strlen(spaceSeperator) + 1);
             strcpy(audioName, spaceSeperator);
-            beatmap.audioFileName = audioName;
+            beatmap->audioFileName = audioName;
         }
         else if(currentSection == Metadata) {
             if (strstr(line, "Title:")) {
-                beatmap.title = GetBeatmapInfoString(line);
+                beatmap->title = GetBeatmapInfoString(line);
             } else if (strstr(line, "Artist:")) {
-                beatmap.artist = GetBeatmapInfoString(line);
+                beatmap->artist = GetBeatmapInfoString(line);
             } else if (strstr(line, "Version:")) {
-                beatmap.difficultyName = GetBeatmapInfoString(line);
+                beatmap->difficultyName = GetBeatmapInfoString(line);
             }
         }
         else if(currentSection == Events) {
@@ -95,15 +100,15 @@ void StartOsuFileProcessing(char* fileName) {
                 char* backgroundName = malloc(strlen(spaceSeperator) + 1);
                 strcpy(backgroundName, spaceSeperator);
 
-                beatmap.backgroundFileName = backgroundName;
+                beatmap->backgroundFileName = backgroundName;
             }
         }
         else if(currentSection == Difficulty) {
             if(strstr(line, "HPDrainRate:")) {
-                beatmap.hpDrain = GetBeatmapInfoInt(line);
+                beatmap->hpDrain = GetBeatmapInfoInt(line);
             }
             else if(strstr(line, "OverallDifficulty:")) {
-                beatmap.od = GetBeatmapInfoInt(line);
+                beatmap->od = GetBeatmapInfoInt(line);
             }
         }
         // Filling info about hitobjects
@@ -114,37 +119,46 @@ void StartOsuFileProcessing(char* fileName) {
                 commaSection = strtok(NULL, ",");
                 // We move to the timing section with this (after the second comma)
 
-                Notes[noteCounter].timing = strtol(commaSection, NULL, 10); // Converting the string to an integer
-                Notes[noteCounter].position = notePosition; // Initialize the notes
-                Notes[noteCounter].isPressed = 0;
-                Notes[noteCounter].sliderVelocity = 1;
+                notes[noteCount].timing = strtol(commaSection, NULL, 10); // Converting the string to an integer
+                notes[noteCount].position = notePosition; // Initialize the notes
+                notes[noteCount].isPressed = 0;
+                notes[noteCount].sliderVelocity = 1;
 
                 commaSection = strtok(NULL, ",");
                 commaSection = strtok(NULL, ",");
                 // We move to the hitsound section with this (after the fifth comma)
 
                 if(*commaSection == '0') {
-                    Notes[noteCounter].isBlue = 0;
-                    Notes[noteCounter].bigNote = 0;
+                    notes[noteCount].isBlue = 0;
+                    notes[noteCount].bigNote = 0;
                 }
                 else if(*commaSection == '4') {
-                    Notes[noteCounter].isBlue = 0;
-                    Notes[noteCounter].bigNote = 1;
+                    notes[noteCount].isBlue = 0;
+                    notes[noteCount].bigNote = 1;
                 } else if(*commaSection == '6' || strcmp(commaSection, "12") == 0) {
-                    Notes[noteCounter].isBlue = 1;
-                    Notes[noteCounter].bigNote = 1;
+                    notes[noteCount].isBlue = 1;
+                    notes[noteCount].bigNote = 1;
                 }
                 else {
-                    Notes[noteCounter].isBlue = 1;
-                    Notes[noteCounter].bigNote = 0;
+                    notes[noteCount].isBlue = 1;
+                    notes[noteCount].bigNote = 0;
                 }
 
-                Notes[noteCounter].noteColor = Notes[noteCounter].isBlue?BLUE:RED;
-                noteCounter++;
+                notes[noteCount].noteColor = notes[noteCount].isBlue?BLUE:RED;
+                noteCount++;
         }
     }
     fclose(filePointer);
     currentSection = 0;
+    return beatmap;
+}
+
+void FreeBeatmap(Beatmap* beatmap) {
+    free(beatmap->audioFileName);
+    free(beatmap->backgroundFileName);
+    free(beatmap->difficultyName);
+    free(beatmap->artist);
+    free(beatmap->title);
 }
 
 int GetBeatmapInfoInt(char* line) {
