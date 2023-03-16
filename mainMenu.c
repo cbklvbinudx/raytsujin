@@ -54,14 +54,14 @@ void UpdateMainMenu() {
                 StartOsuFileProcessing(extractedFilePath);
 
                 char *mapAudioBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 1);
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 2); // + 2 for the terminator and for the backslash
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapAudioBuffer, "/");
                 strcat(mapAudioBuffer, beatmap.audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 1);
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 2); // + 2 for the terminator and for the backslash
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapBackgroundBuffer, "/");
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
