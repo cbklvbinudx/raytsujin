@@ -14,4 +14,3 @@ enum GameState {
 };
 
 void ResetGameplayVariables();
-void FreeBeatmapMemory();

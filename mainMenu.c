@@ -58,27 +58,29 @@ void UpdateMainMenu() {
             if(strcmp(previousExtractedFilePath, extractedFilePath) != 0 && isFileProcessed) {
                 isFileProcessed = 0;
                 ResetGameplayVariables();
-                noteCounter = 0;
-                FreeBeatmapMemory();
+                noteCount = 0;
+                free(notes);
+                notes = NULL;
+                FreeBeatmap(currentBeatmap);
                 UnloadTexture(mapBackground);
                 UnloadMusicStream(mapAudio);
             }
 
             if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
-                StartOsuFileProcessing(extractedFilePath);
+                currentBeatmap = LoadBeatmapFromFile(extractedFilePath);
 
                 char *mapAudioBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.audioFileName) + 2); // + 2 for the terminator and for the backslash
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(currentBeatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapAudioBuffer, "/");
-                strcat(mapAudioBuffer, beatmap.audioFileName);
+                strcat(mapAudioBuffer, currentBeatmap->audioFileName);
                 mapAudio = LoadMusicStream(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(beatmap.backgroundFileName) + 2); // + 2 for the terminator and for the backslash
+                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(currentBeatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
                 strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapBackgroundBuffer, "/");
-                strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
+                strcat(mapBackgroundBuffer, currentBeatmap->backgroundFileName);
 
                 Image mapBackgroundImage = LoadImage(mapBackgroundBuffer);
                 ImageResize(&mapBackgroundImage, screenWidth, screenHeight);

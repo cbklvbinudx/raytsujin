@@ -2,11 +2,12 @@
 #include "beatmapInfo.h"
 #include "raylib.h"
 
-extern int noteCounter;
-extern Note Notes[512];
-extern Beatmap beatmap;
+extern int noteCount;
+extern Note* notes;
+extern Beatmap* currentBeatmap;
 
-void StartOsuFileProcessing(char* filename);
+Beatmap* LoadBeatmapFromFile(char* filename);
+void FreeBeatmap(Beatmap* beatmap);
 
 int GetBeatmapInfoInt(char* line);
 char* GetBeatmapInfoString(char* line);
