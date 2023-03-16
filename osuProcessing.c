@@ -126,7 +126,7 @@ void StartOsuFileProcessing(char* fileName) {
                 else if(*commaSection == '4') {
                     Notes[noteCounter].isBlue = 0;
                     Notes[noteCounter].bigNote = 1;
-                } else if(*commaSection == '8' || strcmp(commaSection, "12") == 0) {
+                } else if(*commaSection == '6' || strcmp(commaSection, "12") == 0) {
                     Notes[noteCounter].isBlue = 1;
                     Notes[noteCounter].bigNote = 1;
                 }
