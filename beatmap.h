@@ -1,11 +1,6 @@
 #pragma once
 #include "raylib.h"
 
-extern char* extractedFilePath;
-extern char* previousExtractedFilePath;
-extern Music mapAudio;
-extern Texture2D mapBackground;
-
 typedef struct Note {
     Vector2 position;
     int sliderVelocity;
@@ -17,6 +12,8 @@ typedef struct Note {
 } Note;
 
 typedef struct Beatmap {
+    Note* notes;
+    int noteCount;
     char* title;
     char* artist;
     char* difficultyName;
@@ -25,3 +22,16 @@ typedef struct Beatmap {
     int od;
     char* backgroundFileName;
 } Beatmap;
+
+extern char* extractedFilePath;
+extern char* previousExtractedFilePath;
+extern Music audio;
+
+extern Texture2D mapBackground;
+extern Beatmap* currentBeatmap;
+
+Beatmap* LoadBeatmapFromFile(char* filename);
+void FreeBeatmap(Beatmap* beatmap);
+
+int GetBeatmapInfoInt(char* line);
+char* GetBeatmapInfoString(char* line);

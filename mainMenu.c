@@ -4,7 +4,7 @@
 #include "mainMenu.h"
 #include "config.h"
 #include "raygui.h"
-#include "osuProcessing.h"
+#include "beatmap.h"
 
 FilePathList droppedFiles;
 char* previousExtractedFilePath = "";
@@ -58,12 +58,9 @@ void UpdateMainMenu() {
             if(strcmp(previousExtractedFilePath, extractedFilePath) != 0 && isFileProcessed) {
                 isFileProcessed = 0;
                 ResetGameplayVariables();
-                noteCount = 0;
-                free(notes);
-                notes = NULL;
                 FreeBeatmap(currentBeatmap);
                 UnloadTexture(mapBackground);
-                UnloadMusicStream(mapAudio);
+                UnloadMusicStream(audio);
             }
 
             if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
@@ -74,7 +71,7 @@ void UpdateMainMenu() {
                 strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
                 strcat(mapAudioBuffer, "/");
                 strcat(mapAudioBuffer, currentBeatmap->audioFileName);
-                mapAudio = LoadMusicStream(mapAudioBuffer);
+                audio = LoadMusicStream(mapAudioBuffer);
 
                 char *mapBackgroundBuffer = malloc(
                         strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(currentBeatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash

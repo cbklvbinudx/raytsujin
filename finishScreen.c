@@ -2,7 +2,7 @@
 #include "finishScreen.h"
 #include "raygui.h"
 #include "config.h"
-#include "beatmapInfo.h"
+#include "beatmap.h"
 
 int backButtonSwitch = 0;
 
