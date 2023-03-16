@@ -4,7 +4,7 @@
 #include "mainMenu.h"
 #include "config.h"
 #include "raygui.h"
-#include "osuProcessing.h"
+#include "beatmap.h"
 
 FilePathList droppedFiles;
 char* previousExtractedFilePath = "";

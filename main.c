@@ -1,11 +1,10 @@
 #include "raylib.h"
-#include "osuProcessing.h"
+#include "beatmap.h"
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
 #include <stdlib.h>
 #include "finishScreen.h"
-#include "osuProcessing.h"
 
 void DrawElementsPlaying();
 void DrawPlayfield();

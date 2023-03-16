@@ -1,9 +1,8 @@
 #include "raylib.h"
-#include "beatmapInfo.h"
+#include "beatmap.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "osuProcessing.h"
 #include "config.h"
 
 int noteCount = 0;
