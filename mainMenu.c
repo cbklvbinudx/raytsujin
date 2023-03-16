@@ -44,15 +44,20 @@ void UpdateMainMenu() {
     if(IsKeyPressed(KEY_ESCAPE)) {
         SetExitKey(KEY_ESCAPE);
     }
+
     if(IsFileDropped()) {
+
         droppedFiles = LoadDroppedFiles();
+
         if(droppedFiles.count == 1 && IsFileExtension(droppedFiles.paths[0], ".osu")) {
 
-            if(strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
+            char* extractedFilePathBuffer = malloc(strlen(droppedFiles.paths[0]) + 1);
+            strcpy(extractedFilePathBuffer, droppedFiles.paths[0]);
+            extractedFilePath = extractedFilePathBuffer;
+
+            if(strcmp(previousExtractedFilePath, extractedFilePath) != 0 && isFileProcessed) {
                 isFileProcessed = 0;
             }
-
-            extractedFilePath = droppedFiles.paths[0];
 
             if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
                 StartOsuFileProcessing(extractedFilePath);
@@ -71,7 +76,10 @@ void UpdateMainMenu() {
                 strcat(mapBackgroundBuffer, beatmap.backgroundFileName);
                 mapBackground = LoadTexture(mapBackgroundBuffer);
 
-                previousExtractedFilePath = droppedFiles.paths[0];
+                char* previousExtractedFilePathBuffer = malloc(strlen(droppedFiles.paths[0]) + 1);
+                strcpy(previousExtractedFilePathBuffer, droppedFiles.paths[0]);
+                previousExtractedFilePath = previousExtractedFilePathBuffer;
+
                 isFileProcessed = 1;
             }
         }
