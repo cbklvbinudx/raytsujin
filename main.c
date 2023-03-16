@@ -47,7 +47,7 @@ const int screenHeight = 900;
 Sound redSound;
 Sound blueSound;
 Sound comboBreak;
-Music mapAudio;
+Music audio;
 
 Image icon;
 
@@ -81,14 +81,14 @@ int main() {
         }
         else if(gameStateSwitch == Playing) {
             if(lastGameState != Playing) {
-                PlayMusicStream(mapAudio);
+                PlayMusicStream(audio);
             }
-            if(GetMusicTimePlayed(mapAudio) > GetMusicTimeLength(mapAudio) - 0.01) {
+            if(GetMusicTimePlayed(audio) > GetMusicTimeLength(audio) - 0.01) {
                 gameStateSwitch = Finished;
             }
-            songTimeElapsed = GetMusicTimePlayed(mapAudio) * 1000; // Time played in milliseconds, for use with .osu file timing
+            songTimeElapsed = GetMusicTimePlayed(audio) * 1000; // Time played in milliseconds, for use with .osu file timing
             lastGameState = Playing;
-            UpdateMusicStream(mapAudio);
+            UpdateMusicStream(audio);
             UpdateGamePlaying();
             DrawElementsPlaying();
         }
@@ -96,7 +96,7 @@ int main() {
             DrawFinishScreen();
             UpdateFinishScreen();
             if(lastGameState != Finished) {
-                StopMusicStream(mapAudio);
+                StopMusicStream(audio);
             }
             lastGameState = Finished;
         }
@@ -112,7 +112,7 @@ int main() {
     UnloadSound(redSound);
     UnloadSound(blueSound);
     UnloadSound(comboBreak);
-    UnloadMusicStream(mapAudio);
+    UnloadMusicStream(audio);
 
     FreeBeatmap(currentBeatmap);
     free(extractedFilePath);
@@ -129,11 +129,11 @@ void DrawElementsPlaying() {
     ClearBackground(RAYWHITE);
     DrawPlayfield();
 
-    for (int i = 0; i < noteCount; i++)
+    for (int i = 0; i < currentBeatmap->noteCount; i++)
     {
-        DrawNote(&notes[i]);
+        DrawNote(currentBeatmap->notes + i);
 
-        notes[i].position.x = scrollFieldHeight + notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
+        currentBeatmap->notes[i].position.x = scrollFieldHeight + currentBeatmap->notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
     }    
 
     if(judgementSwitch == Miss && songTimeElapsed - lastNoteTiming < 300) {
@@ -177,7 +177,7 @@ void DrawNote(Note* taikoNote) {
 }
 
 void UpdateGamePlaying() {
-    int timingProper = notes[currentNote].timing + scrollFieldHeight; // Offset by the diameter of the destination circle
+    int timingProper = currentBeatmap->notes[currentNote].timing + scrollFieldHeight; // Offset by the diameter of the destination circle
 
     deltaPress = fabsf(timingProper - songTimeElapsed);
 
@@ -190,11 +190,11 @@ void UpdateGamePlaying() {
         judgementSwitch = Miss;
     }
     // Blue note logic
-    else if(notes[currentNote].isBlue) {
-        if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+    else if(currentBeatmap->notes[currentNote].isBlue) {
+        if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && currentBeatmap->notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If note is hit
-            notes[currentNote].isPressed = 1;
-            notes[currentNote].noteColor = Fade(BLUE, 0.4f);
+            currentBeatmap->notes[currentNote].isPressed = 1;
+            currentBeatmap->notes[currentNote].noteColor = Fade(BLUE, 0.4f);
 
             lastNoteTiming = timingProper;
             if(deltaPress < hitWindow - 33) {
@@ -207,13 +207,13 @@ void UpdateGamePlaying() {
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
-        } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+        } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && currentBeatmap->notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
             PlaySound(comboBreak);
 
-            notes[currentNote].isPressed = 1;
-            notes[currentNote].noteColor = BLANK;
+            currentBeatmap->notes[currentNote].isPressed = 1;
+            currentBeatmap->notes[currentNote].noteColor = BLANK;
 
             lastNoteTiming = timingProper;
             judgementSwitch = Miss;
@@ -224,10 +224,10 @@ void UpdateGamePlaying() {
         }
     // Red note logic
     } else {
-        if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+        if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindow) && currentBeatmap->notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If note is hit
-            notes[currentNote].isPressed = 1;
-            notes[currentNote].noteColor = Fade(RED, 0.4f);
+            currentBeatmap->notes[currentNote].isPressed = 1;
+            currentBeatmap->notes[currentNote].noteColor = Fade(RED, 0.4f);
 
             lastNoteTiming = timingProper;
             if(deltaPress < hitWindow - 33) {
@@ -240,13 +240,13 @@ void UpdateGamePlaying() {
             comboCounter++;
             wasPressedLastFrame = 1;
             currentNote++;
-        } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
+        } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindow) && currentBeatmap->notes[currentNote].isPressed == 0 && !wasPressedLastFrame) {
             // If wrong note is pressed
 
             PlaySound(comboBreak);
 
-            notes[currentNote].isPressed = 1;
-            notes[currentNote].noteColor = BLANK;
+            currentBeatmap->notes[currentNote].isPressed = 1;
+            currentBeatmap->notes[currentNote].noteColor = BLANK;
 
             lastNoteTiming = timingProper;
             judgementSwitch = Miss;
@@ -275,7 +275,7 @@ void UpdateGamePlaying() {
         RetryButton();
     }
     if(IsKeyPressed(KEY_ESCAPE) && gameStateSwitch == Playing) {
-        StopMusicStream(mapAudio);
+        StopMusicStream(audio);
         gameStateSwitch = Menu;
         lastGameState = Menu;
 
@@ -284,9 +284,9 @@ void UpdateGamePlaying() {
 }
 
 void RetryButton() {
-    if(IsMusicStreamPlaying(mapAudio)) {
-        StopMusicStream(mapAudio);
-        PlayMusicStream(mapAudio);
+    if(IsMusicStreamPlaying(audio)) {
+        StopMusicStream(audio);
+        PlayMusicStream(audio);
 
         ResetGameplayVariables();
     }
@@ -294,9 +294,9 @@ void RetryButton() {
 
 void ResetGameplayVariables() {
 
-    for(int i = 0; i < noteCount; i++) {
-        notes[i].isPressed = 0;
-        notes[i].noteColor = notes[i].isBlue?BLUE:RED;
+    for(int i = 0; i < currentBeatmap->noteCount; i++) {
+        currentBeatmap->notes[i].isPressed = 0;
+        currentBeatmap->notes[i].noteColor = currentBeatmap->notes[i].isBlue?BLUE:RED;
     }
 
     comboCounter = 0;

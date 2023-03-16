@@ -12,6 +12,8 @@ typedef struct Note {
 } Note;
 
 typedef struct Beatmap {
+    Note* notes;
+    int noteCount;
     char* title;
     char* artist;
     char* difficultyName;
@@ -23,11 +25,9 @@ typedef struct Beatmap {
 
 extern char* extractedFilePath;
 extern char* previousExtractedFilePath;
-extern Music mapAudio;
+extern Music audio;
 
 extern Texture2D mapBackground;
-extern int noteCount;
-extern Note* notes;
 extern Beatmap* currentBeatmap;
 
 Beatmap* LoadBeatmapFromFile(char* filename);
