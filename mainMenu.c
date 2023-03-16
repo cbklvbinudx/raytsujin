@@ -1,4 +1,5 @@
-#define RAYGUI_IMPLEMENTATION
+#include <string.h>
+#include <stdlib.h>
 #include "raylib.h"
 #include "mainMenu.h"
 #include "config.h"
