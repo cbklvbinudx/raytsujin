@@ -166,7 +166,7 @@ void DrawPlayfield() {
 }
 
 void DrawNote(Note* taikoNote) {
-    if(taikoNote->position.x <= screenWidth) {
+    if(taikoNote->position.x <= screenWidth + scrollFieldHeight / 2 + 15 && taikoNote->position.x >= -scrollFieldHeight / 2 - 15) {
         if (taikoNote->bigNote) {
             DrawCircleV(taikoNote->position, scrollFieldHeight / 2 + 15, taikoNote->noteColor);
             DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2 + 15, BLACK);
