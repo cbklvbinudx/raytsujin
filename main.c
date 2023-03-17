@@ -36,7 +36,8 @@ Texture2D taikoMiss;
 Texture2D taikoGood;
 Texture2D taikoGreat;
 
-float scrollFieldHeight = 100.0f; // Support for numbers different than 100 doesn't really work yet
+float scrollFieldHeight = 100.0f;
+float destinationCircleOffset = 100.0f;
 const float scrollFieldOffset = 50.0f;
 
 const float hitWindow = 100.0f;
@@ -132,17 +133,17 @@ void DrawElementsPlaying() {
     {
         DrawNote(currentBeatmap->notes + i);
 
-        currentBeatmap->notes[i].position.x = scrollFieldHeight + currentBeatmap->notes[i].timing - songTimeElapsed; // Offset by the diameter of the destination circle
+        currentBeatmap->notes[i].position.x = destinationCircleOffset + currentBeatmap->notes[i].timing - songTimeElapsed;
     }    
 
     if(judgementSwitch == Miss && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoMiss, -70, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoMiss, -30, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
     if(judgementSwitch == Great && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoGreat, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoGreat, -50, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
     if(judgementSwitch == Good && songTimeElapsed - lastNoteTiming < 300) {
-        DrawTexture(taikoGood, -90, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
+        DrawTexture(taikoGood, -50, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
 
@@ -161,7 +162,7 @@ void DrawPlayfield() {
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawCircleGradient(0, screenHeight, 150, BLACK, BLANK);
-    DrawCircle(50, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
+    DrawCircle(destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
 void DrawNote(Note* taikoNote) {
@@ -178,7 +179,7 @@ void DrawNote(Note* taikoNote) {
 }
 
 void UpdateGamePlaying() {
-    int timingProper = currentBeatmap->notes[currentNote].timing + scrollFieldHeight; // Offset by the diameter of the destination circle
+    int timingProper = currentBeatmap->notes[currentNote].timing;
 
     deltaPress = fabsf(timingProper - songTimeElapsed);
 
