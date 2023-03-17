@@ -129,7 +129,7 @@ void DrawElementsPlaying() {
     ClearBackground(RAYWHITE);
     DrawPlayfield();
 
-    for (int i = 0; i < currentBeatmap->noteCount; i++)
+    for (int i = currentBeatmap->noteCount - 1; i >= 0; i--)
     {
         DrawNote(currentBeatmap->notes + i);
 
