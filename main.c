@@ -153,6 +153,13 @@ void DrawElementsPlaying() {
     DrawText(TextFormat("Great: %i", greatCounter), 2, screenHeight - 60, 16, WHITE);
     DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, WHITE);
 
+    if(IsKeyDown(KEY_D) || IsKeyDown(KEY_K)) {
+        DrawText("BLUE PRESSED", 150, 200, 16, BLUE);
+    }
+    if(IsKeyDown(KEY_F) || IsKeyDown(KEY_J)) {
+        DrawText("RED PRESSED", 150, 220, 16, RED);
+    }
+
     EndDrawing();
 }
 
@@ -260,12 +267,6 @@ void UpdateGamePlaying() {
     }
     if(GetKeyPressed() == 0) {
         wasPressedLastFrame = 0;
-    }
-    if(IsKeyDown(KEY_D) || IsKeyDown(KEY_K)) {
-        DrawText("BLUE PRESSED", 150, 200, 16, BLUE);
-    }
-    if(IsKeyDown(KEY_F) || IsKeyDown(KEY_J)) {
-        DrawText("RED PRESSED", 150, 220, 16, RED);
     }
     if(IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) {
         PlaySound(blueSound);
