@@ -36,9 +36,11 @@ Texture2D taikoMiss;
 Texture2D taikoGood;
 Texture2D taikoGreat;
 
-float scrollFieldHeight = 100.0f;
-float destinationCircleOffset = 100.0f;
+const float scrollFieldHeight = 100.0f;
+const float destinationCircleOffset = 100.0f;
 const float scrollFieldOffset = 50.0f;
+
+const Vector2 destinationCirclePosition = { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset};
 
 const float hitWindow = 100.0f;
 
@@ -131,18 +133,18 @@ void DrawElementsPlaying() {
 
 
     if(IsKeyDown(KEY_K)) {
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 2, 0, 180, 16, BLUE);
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 0, 180, 16, BLACK);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 2, 0, 180, 16, BLUE);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 3, 0, 180, 16, BLACK);
     }
     if(IsKeyDown(KEY_D)) {
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 2, 180, 360, 16, BLUE);
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 180, 360, 16, BLACK);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 2, 180, 360, 16, BLUE);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 3, 180, 360, 16, BLACK);
     }
     if(IsKeyDown(KEY_J)) {
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 0, 180, 16, RED);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 3, 0, 180, 16, RED);
     }
     if(IsKeyDown(KEY_F)) {
-        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 180, 360, 16, RED);
+        DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 3, 180, 360, 16, RED);
     }
 
     for (int i = currentBeatmap->noteCount - 1; i >= 0; i--)
@@ -178,7 +180,7 @@ void DrawPlayfield() {
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawCircleGradient(0, screenHeight, 150, BLACK, BLANK);
-    DrawCircle(destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset, scrollFieldHeight / 2, BLACK); // The destination circle
+    DrawCircleV(destinationCirclePosition, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
 void DrawNote(Note* taikoNote) {
