@@ -153,6 +153,7 @@ void FreeBeatmap(Beatmap* beatmap) {
     free(beatmap->difficultyName);
     free(beatmap->artist);
     free(beatmap->title);
+    free(beatmap);
 }
 
 int GetBeatmapInfoInt(char* line) {
