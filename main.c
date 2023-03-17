@@ -129,6 +129,22 @@ void DrawElementsPlaying() {
     ClearBackground(RAYWHITE);
     DrawPlayfield();
 
+
+    if(IsKeyDown(KEY_K)) {
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 2, 0, 180, 16, BLUE);
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 0, 180, 16, BLACK);
+    }
+    if(IsKeyDown(KEY_D)) {
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 2, 180, 360, 16, BLUE);
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 180, 360, 16, BLACK);
+    }
+    if(IsKeyDown(KEY_J)) {
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 0, 180, 16, RED);
+    }
+    if(IsKeyDown(KEY_F)) {
+        DrawCircleSector((Vector2) { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset }, scrollFieldHeight / 3, 180, 360, 16, RED);
+    }
+
     for (int i = currentBeatmap->noteCount - 1; i >= 0; i--)
     {
         DrawNote(currentBeatmap->notes + i);
@@ -152,13 +168,6 @@ void DrawElementsPlaying() {
     DrawText(TextFormat("Good: %i", goodCounter), 2, screenHeight - 80, 16, WHITE);
     DrawText(TextFormat("Great: %i", greatCounter), 2, screenHeight - 60, 16, WHITE);
     DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, WHITE);
-
-    if(IsKeyDown(KEY_D) || IsKeyDown(KEY_K)) {
-        DrawText("BLUE PRESSED", 150, 200, 16, BLUE);
-    }
-    if(IsKeyDown(KEY_F) || IsKeyDown(KEY_J)) {
-        DrawText("RED PRESSED", 150, 220, 16, RED);
-    }
 
     EndDrawing();
 }
