@@ -91,8 +91,7 @@ int main() {
             UpdateMusicStream(audio);
             UpdateGamePlaying();
             DrawElementsPlaying();
-        }
-        else if(gameStateSwitch == Finished) {
+        } else if(gameStateSwitch == Finished) {
             DrawFinishScreen();
             UpdateFinishScreen();
             if(lastGameState != Finished) {
@@ -307,4 +306,3 @@ void ResetGameplayVariables() {
     lastNoteTiming = 0;
     currentNote = 0;
 }
-

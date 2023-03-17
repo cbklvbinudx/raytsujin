@@ -28,7 +28,7 @@ void DrawMainMenu() {
 
     if(isFileProcessed) {
 
-        DrawText(TextFormat("Currently loaded file: %s", GetFileNameWithoutExt(extractedFilePath)), 2, 2, 20, GRAY);
+        DrawText(TextFormat("Currently loaded map: %s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName), 2, 2, 20, GRAY);
 
         gameStateSwitch = GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2, screenWidth / 3, screenHeight / 7 },
                                     "File loaded! Press this button or ENTER to play.");
