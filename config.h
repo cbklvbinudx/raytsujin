@@ -12,5 +12,3 @@ enum GameState {
     Failed,
     Finished,
 };
-
-void ResetGameplayVariables();

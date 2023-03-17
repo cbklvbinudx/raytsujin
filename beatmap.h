@@ -35,3 +35,5 @@ void FreeBeatmap(Beatmap* beatmap);
 
 int GetBeatmapInfoInt(char* line);
 char* GetBeatmapInfoString(char* line);
+
+void ResetGameplayVariables();
