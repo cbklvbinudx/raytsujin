@@ -5,6 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "finishScreen.h"
+#include "raygui.h"
 
 void DrawElementsPlaying();
 void DrawPlayfield();
@@ -65,6 +66,8 @@ int main() {
     InitWindow(screenWidth, screenHeight, "raytsujin");
     icon = LoadImage("resources/teri.png"); // TODO: Change this icon to something more fitting
     SetWindowIcon(icon);
+
+    GuiLoadStyle("resources/dark.rgs");
 
     SetExitKey(KEY_NULL);
 
