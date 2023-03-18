@@ -4,6 +4,8 @@ project(raytsujin)
 # Generate compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CUSTOMIZE_BUILD On)
+set(SUPPORT_FILEFORMAT_JPG On)
 # Dependencies
 find_package(raylib 4.2.0 QUIET) # QUIET or REQUIRED
 if (NOT raylib_FOUND) # If there's none, fetch and build raylib
