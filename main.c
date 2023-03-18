@@ -45,8 +45,8 @@ const Vector2 destinationCirclePosition = { destinationCircleOffset, scrollField
 
 const float hitWindow = 100.0f;
 
-const int screenWidth = 1600;
-const int screenHeight = 900;
+int screenWidth = 1600;
+int screenHeight = 900;
 
 Sound redSound;
 Sound blueSound;

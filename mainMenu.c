@@ -44,6 +44,17 @@ void UpdateMainMenu() {
     if(IsKeyPressed(KEY_ESCAPE)) {
         SetExitKey(KEY_ESCAPE);
     }
+    if(IsKeyPressed(KEY_F) && !IsWindowFullscreen()) {
+        screenWidth = GetMonitorWidth(GetCurrentMonitor());
+        screenHeight = GetMonitorHeight(GetCurrentMonitor());
+        SetWindowSize(screenWidth, screenHeight);
+        ToggleFullscreen();
+    } else if(IsKeyPressed(KEY_F) && IsWindowFullscreen()) {
+        ToggleFullscreen();
+        screenWidth = 1600;
+        screenHeight = 900;
+        SetWindowSize(screenWidth, screenHeight);
+    }
 
     if(IsFileDropped()) {
 

@@ -14,6 +14,8 @@ Don (Red): **F, J**
 
 Retry: **`**
 
+Toggle fullscreen: **F**
+
 # Building
 Make sure to rebuild your raylib to support .jpg files.
 
