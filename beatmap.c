@@ -16,13 +16,13 @@ enum SectionEnum {
 };
 
 int currentSection = 0;
+long int hitObjectsPosition;
 
 Beatmap* currentBeatmap;
 
 Beatmap* LoadBeatmapFromFile(char* fileName) {
     Beatmap* beatmap = malloc(sizeof(Beatmap));
     beatmap->noteCount = 0;
-    beatmap->notes = malloc(20000 * sizeof(Note));
 
     FILE* filePointer;
 
@@ -58,6 +58,7 @@ Beatmap* LoadBeatmapFromFile(char* fileName) {
         }
         else if(strstr(line, "[HitObjects]")) {
             currentSection = HitObjects;
+            hitObjectsPosition = ftell(filePointer);
             continue;
         }
 
@@ -104,42 +105,50 @@ Beatmap* LoadBeatmapFromFile(char* fileName) {
                 beatmap->od = GetBeatmapInfoInt(line);
             }
         }
-        // Filling info about hitobjects
-        if(currentSection == HitObjects) {
-
-                char* commaSection = strtok(line, ",");
-                commaSection = strtok(NULL, ",");
-                commaSection = strtok(NULL, ",");
-                // We move to the timing section with this (after the second comma)
-
-                beatmap->notes[beatmap->noteCount].timing = strtol(commaSection, NULL, 10); // Converting the string to an integer
-                beatmap->notes[beatmap->noteCount].position = notePosition; // Initialize the notes
-                beatmap->notes[beatmap->noteCount].isPressed = 0;
-                beatmap->notes[beatmap->noteCount].sliderVelocity = 1;
-
-                commaSection = strtok(NULL, ",");
-                commaSection = strtok(NULL, ",");
-                // We move to the hitsound section with this (after the fifth comma)
-
-                if(*commaSection == '0') {
-                    beatmap->notes[beatmap->noteCount].isBlue = 0;
-                    beatmap->notes[beatmap->noteCount].bigNote = 0;
-                }
-                else if(*commaSection == '4') {
-                    beatmap->notes[beatmap->noteCount].isBlue = 0;
-                    beatmap->notes[beatmap->noteCount].bigNote = 1;
-                } else if(*commaSection == '6' || strcmp(commaSection, "12") == 0) {
-                    beatmap->notes[beatmap->noteCount].isBlue = 1;
-                    beatmap->notes[beatmap->noteCount].bigNote = 1;
-                }
-                else {
-                    beatmap->notes[beatmap->noteCount].isBlue = 1;
-                    beatmap->notes[beatmap->noteCount].bigNote = 0;
-                }
-
-                beatmap->notes[beatmap->noteCount].noteColor = beatmap->notes[beatmap->noteCount].isBlue?BLUE:RED;
-                beatmap->noteCount++;
+        // Counting the amount of hitobjects in order to allocate enough memory later
+        if (currentSection == HitObjects) {
+            beatmap->noteCount++;
         }
+    }
+    // We finished counting the objects, so now we can allocate enough memory
+    beatmap->notes = malloc(beatmap->noteCount * sizeof(Note));
+    beatmap->noteCount = 0;
+    // We skip to the [HitObjects] section and fill in the notes data
+    fseek(filePointer, hitObjectsPosition, SEEK_SET);
+    while (fgets(line, 512, filePointer)) {
+
+        char *commaSection = strtok(line, ",");
+        commaSection = strtok(NULL, ",");
+        commaSection = strtok(NULL, ",");
+        // We move to the timing section with this (after the second comma)
+
+        beatmap->notes[beatmap->noteCount].timing = strtol(commaSection, NULL,
+                                                           10); // Converting the string to an integer
+        beatmap->notes[beatmap->noteCount].position = notePosition; // Initialize the notes
+        beatmap->notes[beatmap->noteCount].isPressed = 0;
+        beatmap->notes[beatmap->noteCount].sliderVelocity = 1;
+
+        commaSection = strtok(NULL, ",");
+        commaSection = strtok(NULL, ",");
+        // We move to the hitsound section with this (after the fifth comma)
+
+        if (*commaSection == '0') {
+            beatmap->notes[beatmap->noteCount].isBlue = 0;
+            beatmap->notes[beatmap->noteCount].bigNote = 0;
+        } else if (*commaSection == '4') {
+            beatmap->notes[beatmap->noteCount].isBlue = 0;
+            beatmap->notes[beatmap->noteCount].bigNote = 1;
+        } else if (*commaSection == '6' || strcmp(commaSection, "12") == 0) {
+            beatmap->notes[beatmap->noteCount].isBlue = 1;
+            beatmap->notes[beatmap->noteCount].bigNote = 1;
+        } else {
+            beatmap->notes[beatmap->noteCount].isBlue = 1;
+            beatmap->notes[beatmap->noteCount].bigNote = 0;
+        }
+
+        beatmap->notes[beatmap->noteCount].noteColor = beatmap->notes[beatmap->noteCount].isBlue ? BLUE
+                                                                                                 : RED;
+        beatmap->noteCount++;
     }
     fclose(filePointer);
     currentSection = 0;
