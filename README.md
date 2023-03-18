@@ -16,6 +16,10 @@ Retry: **`**
 
 Toggle fullscreen: **F**
 
+Raise volume: **Up arrow**
+
+Lower volume: **Down arrow**
+
 # Building
 Make sure to rebuild your raylib to support .jpg files.
 

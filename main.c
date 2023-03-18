@@ -48,6 +48,8 @@ const float hitWindow = 100.0f;
 int screenWidth = 1600;
 int screenHeight = 900;
 
+float currentVolume = 1.0f;
+
 Sound redSound;
 Sound blueSound;
 Sound comboBreak;
@@ -104,6 +106,14 @@ int main() {
                 StopMusicStream(audio);
             }
             lastGameState = Finished;
+        }
+
+        if(IsKeyPressed(KEY_UP) && currentVolume < 1.0f) {
+            currentVolume += 0.05f;
+            SetMasterVolume(currentVolume);
+        } else if(IsKeyPressed(KEY_DOWN)) {
+            currentVolume -= 0.05f;
+            SetMasterVolume(currentVolume);
         }
     }
 
