@@ -11,9 +11,11 @@ void DrawMainMenu() {
     BeginDrawing();
 
     ClearBackground(WHITE);
-    DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
-                   (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
-                   WHITE);
+
+    if(currentBeatmap)
+        DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, screenWidth, screenHeight },
+                       (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
+                       WHITE);
 
     DrawTextEx(GetFontDefault(), "RAYTSUJIN",(Vector2) { 10,screenHeight - 86 }, 100, 8,GRAY);
 
@@ -53,46 +55,11 @@ void UpdateMainMenu() {
     }
 
     if(IsFileDropped()) {
-
         FilePathList droppedFiles = LoadDroppedFiles();
 
         if(droppedFiles.count == 1 && IsFileExtension(droppedFiles.paths[0], ".osu")) {
-            
-            // Unload current map
-            if(currentBeatmap)
-                FreeBeatmap(currentBeatmap);
-
-            // TODO: this might crash
-            UnloadTexture(mapBackground);
-            UnloadMusicStream(audio);
-
-            // Reference the file path
-            const char* beatmapFilePath = droppedFiles.paths[0];
-            currentBeatmap = LoadBeatmapFromFile(beatmapFilePath);
-
-            // Reference the static parent directory (doesn't require freeing)
-            const char* parentDirectory = GetPrevDirectoryPath(beatmapFilePath);
-
-            char *beatmapAudioPath = malloc(
-                    strlen(parentDirectory) + strlen(currentBeatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
-            strcpy(beatmapAudioPath, parentDirectory);
-            strcat(beatmapAudioPath, "/");
-            strcat(beatmapAudioPath, currentBeatmap->audioFileName);
-            audio = LoadMusicStream(beatmapAudioPath);
-            free(beatmapAudioPath);
-
-            char *beatmapBackgroundPath = malloc(
-                    strlen(parentDirectory) + strlen(currentBeatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
-            strcpy(beatmapBackgroundPath, parentDirectory);
-            strcat(beatmapBackgroundPath, "/");
-            strcat(beatmapBackgroundPath, currentBeatmap->backgroundFileName);
-            Image mapBackgroundImage = LoadImage(beatmapBackgroundPath);
-            free(beatmapBackgroundPath);
-
-            ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
-
-            mapBackground = LoadTextureFromImage(mapBackgroundImage);
-            UnloadImage(mapBackgroundImage);
+            if(currentBeatmap) FreeBeatmap(currentBeatmap);
+            currentBeatmap = LoadBeatmapFromFile(droppedFiles.paths[0]);
         }
 
         UnloadDroppedFiles(droppedFiles);

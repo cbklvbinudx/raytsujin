@@ -20,7 +20,7 @@ Beatmap* currentBeatmap = NULL;
 
 Beatmap* LoadBeatmapFromFile(const char* fileName) {
     Beatmap* beatmap = malloc(sizeof(Beatmap));
-    beatmap->noteCount = 0;
+    memset(beatmap, 0, sizeof(Beatmap));
 
     int currentSection = 0;
     long int hitObjectsPosition;
@@ -152,17 +152,50 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         beatmap->noteCount++;
     }
     fclose(filePointer);
-    currentSection = 0;
+
+    const char* parentDirectory = GetPrevDirectoryPath(fileName);
+    beatmap -> directory = malloc(strlen(parentDirectory) + 1);
+    strcpy(beatmap->directory, parentDirectory);
+
+    LoadBeatmapAudio(beatmap);
+    LoadBeatmapBackground(beatmap);
+
     return beatmap;
 }
 
+void LoadBeatmapAudio(Beatmap* beatmap) {
+    char *beatmapAudioPath = malloc(
+            strlen(beatmap->directory) + strlen(beatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
+    strcpy(beatmapAudioPath, beatmap->directory);
+    strcat(beatmapAudioPath, "/");
+    strcat(beatmapAudioPath, beatmap->audioFileName);
+    beatmap->audio = LoadMusicStream(beatmapAudioPath);
+    free(beatmapAudioPath);
+}
+
+void LoadBeatmapBackground(Beatmap* beatmap) {
+    char *beatmapBackgroundPath = malloc(
+            strlen(beatmap->directory) + strlen(beatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
+    strcpy(beatmapBackgroundPath, beatmap->directory);
+    strcat(beatmapBackgroundPath, "/");
+    strcat(beatmapBackgroundPath, beatmap->backgroundFileName);
+    Image mapBackgroundImage = LoadImage(beatmapBackgroundPath);
+    ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
+    beatmap->background = LoadTextureFromImage(mapBackgroundImage);
+    UnloadImage(mapBackgroundImage);
+    free(beatmapBackgroundPath);
+}
+
 void FreeBeatmap(Beatmap* beatmap) {
+    UnloadMusicStream(beatmap->audio);
+    UnloadTexture(beatmap->background);
     free(beatmap->notes);
     free(beatmap->audioFileName);
     free(beatmap->backgroundFileName);
     free(beatmap->difficultyName);
     free(beatmap->artist);
     free(beatmap->title);
+    free(beatmap->directory);
     free(beatmap);
 }
 
