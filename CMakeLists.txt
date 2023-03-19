@@ -29,6 +29,11 @@ endif()
 
 add_executable(${PROJECT_NAME} main.c beatmap.c mainMenu.c finishScreen.c finishScreen.h rayguiImpl.c)
 #set(raylib_VERBOSE 1)
+
+set(CMAKE_C_FLAGS "-static")
+
+find_package(Threads REQUIRED)
+target_link_libraries(${PROJECT_NAME} Threads::Threads)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # Web Configurations
