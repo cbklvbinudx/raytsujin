@@ -18,9 +18,9 @@ enum SectionEnum {
 int currentSection = 0;
 long int hitObjectsPosition;
 
-Beatmap* currentBeatmap;
+Beatmap* currentBeatmap = NULL;
 
-Beatmap* LoadBeatmapFromFile(char* fileName) {
+Beatmap* LoadBeatmapFromFile(const char* fileName) {
     Beatmap* beatmap = malloc(sizeof(Beatmap));
     beatmap->noteCount = 0;
 

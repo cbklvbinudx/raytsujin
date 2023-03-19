@@ -129,11 +129,8 @@ int main() {
     UnloadSound(comboBreak);
     UnloadMusicStream(audio);
 
-    if(currentBeatmap) {
+    if(currentBeatmap)
         FreeBeatmap(currentBeatmap);
-        free(extractedFilePath);
-        free(previousExtractedFilePath);
-    }
 
     CloseWindow();
 

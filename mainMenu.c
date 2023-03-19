@@ -6,10 +6,6 @@
 #include "raygui.h"
 #include "beatmap.h"
 
-FilePathList droppedFiles;
-char* previousExtractedFilePath = "";
-char* extractedFilePath = "";
-int isFileProcessed = 0;
 
 void DrawMainMenu() {
     BeginDrawing();
@@ -26,7 +22,7 @@ void DrawMainMenu() {
     GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2 , screenWidth / 3, screenHeight / 7 },
                                 "Drop a file with the .osu extension on the window to play!");
 
-    if(isFileProcessed) {
+    if(currentBeatmap) {
 
         DrawText(TextFormat("Currently loaded map: %s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName), 2, 2, 20, GRAY);
 
@@ -58,50 +54,47 @@ void UpdateMainMenu() {
 
     if(IsFileDropped()) {
 
-        droppedFiles = LoadDroppedFiles();
+        FilePathList droppedFiles = LoadDroppedFiles();
 
         if(droppedFiles.count == 1 && IsFileExtension(droppedFiles.paths[0], ".osu")) {
-
-            char* extractedFilePathBuffer = malloc(strlen(droppedFiles.paths[0]) + 1);
-            strcpy(extractedFilePathBuffer, droppedFiles.paths[0]);
-            extractedFilePath = extractedFilePathBuffer;
-
-            if(strcmp(previousExtractedFilePath, extractedFilePath) != 0 && isFileProcessed) {
-                isFileProcessed = 0;
-                ResetGameplayVariables();
+            
+            // Unload current map
+            if(currentBeatmap)
                 FreeBeatmap(currentBeatmap);
-                UnloadTexture(mapBackground);
-                UnloadMusicStream(audio);
-            }
 
-            if(!isFileProcessed || strcmp(previousExtractedFilePath, extractedFilePath) != 0) {
-                currentBeatmap = LoadBeatmapFromFile(extractedFilePath);
+            // TODO: this might crash
+            UnloadTexture(mapBackground);
+            UnloadMusicStream(audio);
 
-                char *mapAudioBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(currentBeatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
-                strcpy(mapAudioBuffer, GetPrevDirectoryPath(extractedFilePath));
-                strcat(mapAudioBuffer, "/");
-                strcat(mapAudioBuffer, currentBeatmap->audioFileName);
-                audio = LoadMusicStream(mapAudioBuffer);
+            // Reference the file path
+            const char* beatmapFilePath = droppedFiles.paths[0];
+            currentBeatmap = LoadBeatmapFromFile(beatmapFilePath);
 
-                char *mapBackgroundBuffer = malloc(
-                        strlen(GetPrevDirectoryPath(extractedFilePath)) + strlen(currentBeatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
-                strcpy(mapBackgroundBuffer, GetPrevDirectoryPath(extractedFilePath));
-                strcat(mapBackgroundBuffer, "/");
-                strcat(mapBackgroundBuffer, currentBeatmap->backgroundFileName);
+            // Reference the static parent directory (doesn't require freeing)
+            const char* parentDirectory = GetPrevDirectoryPath(beatmapFilePath);
 
-                Image mapBackgroundImage = LoadImage(mapBackgroundBuffer);
-                ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
+            char *beatmapAudioPath = malloc(
+                    strlen(parentDirectory) + strlen(currentBeatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
+            strcpy(beatmapAudioPath, parentDirectory);
+            strcat(beatmapAudioPath, "/");
+            strcat(beatmapAudioPath, currentBeatmap->audioFileName);
+            audio = LoadMusicStream(beatmapAudioPath);
+            free(beatmapAudioPath);
 
-                mapBackground = LoadTextureFromImage(mapBackgroundImage);
-                UnloadImage(mapBackgroundImage);
+            char *beatmapBackgroundPath = malloc(
+                    strlen(parentDirectory) + strlen(currentBeatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
+            strcpy(beatmapBackgroundPath, parentDirectory);
+            strcat(beatmapBackgroundPath, "/");
+            strcat(beatmapBackgroundPath, currentBeatmap->backgroundFileName);
+            Image mapBackgroundImage = LoadImage(beatmapBackgroundPath);
+            free(beatmapBackgroundPath);
 
-                char* previousExtractedFilePathBuffer = malloc(strlen(droppedFiles.paths[0]) + 1);
-                strcpy(previousExtractedFilePathBuffer, droppedFiles.paths[0]);
-                previousExtractedFilePath = previousExtractedFilePathBuffer;
+            ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
 
-                isFileProcessed = 1;
-            }
+            mapBackground = LoadTextureFromImage(mapBackgroundImage);
+            UnloadImage(mapBackgroundImage);
         }
+
+        UnloadDroppedFiles(droppedFiles);
     }
 }

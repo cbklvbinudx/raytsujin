@@ -30,7 +30,7 @@ extern Music audio;
 extern Texture2D mapBackground;
 extern Beatmap* currentBeatmap;
 
-Beatmap* LoadBeatmapFromFile(char* filename);
+Beatmap* LoadBeatmapFromFile(const char* filename);
 void FreeBeatmap(Beatmap* beatmap);
 
 int GetBeatmapInfoInt(char* line);
