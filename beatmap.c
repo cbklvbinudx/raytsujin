@@ -36,7 +36,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
 
 
     // Initialized at the right end of the screen
-    Vector2 notePosition = { 800.0f, 50.0f + scrollFieldOffset };
+    Vector2 notePosition = { 800.0f, 50.0f + (float)scrollFieldOffset };
 
     while(fgets(line, 512, filePointer)) {
 
@@ -103,18 +103,18 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         }
         else if(currentSection == Difficulty) {
             if(strstr(line, "HPDrainRate:")) {
-                beatmap->hpDrain = GetBeatmapInfoInt(line);
+                beatmap->hpDrain = GetBeatmapInfoFloat(line);
             }
             else if(strstr(line, "OverallDifficulty:")) {
-                beatmap->od = GetBeatmapInfoInt(line);
+                beatmap->od = GetBeatmapInfoFloat(line);
                 if(beatmap->od < 5) {
-                    hitWindowGreat = 35 - (35 - 50) * (5 - beatmap-> od) / 5;
-                    hitWindowGood = 80 - (80 - 120) * (5 - beatmap->od) / 5;
-                    hitWindowMiss = 95 - (95 - 135) * (5 - beatmap->od) / 5;
+                    hitWindowGreat = 35.0f - (35.0f - 50.0f) * (5.0f - beatmap-> od) / 5.0f;
+                    hitWindowGood = 80.0f - (80.0f - 120.0f) * (5.0f - beatmap->od) / 5.0f;
+                    hitWindowMiss = 95.0f - (95.0f - 135.0f) * (5.0f - beatmap->od) / 5.0f;
                 } else if(beatmap->od > 5) {
-                    hitWindowGreat = 35 + (20 - 35) * (beatmap->od - 5) / 5;
-                    hitWindowGood = 80 + (50 - 80) * (beatmap->od - 5) / 5;
-                    hitWindowMiss = 95 + (70 - 95) * (beatmap->od - 5) / 5;
+                    hitWindowGreat = 35.0f + (20.0f - 35.0f) * (beatmap->od - 5.0f) / 5.0f;
+                    hitWindowGood = 80.0f + (50.0f - 80.0f) * (beatmap->od - 5.0f) / 5.0f;
+                    hitWindowMiss = 95.0f + (70.0f - 95.0f) * (beatmap->od - 5.0f) / 5.0f;
                 } else {
                     hitWindowGreat = 35;
                     hitWindowGood = 80;
@@ -139,7 +139,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         commaSection = strtok(NULL, ",");
         // We move to the timing section with this (after the second comma)
 
-        beatmap->notes[beatmap->noteCount].timing = strtol(commaSection, NULL,
+        beatmap->notes[beatmap->noteCount].timing = (float)strtol(commaSection, NULL,
                                                            10); // Converting the string to an integer
         beatmap->notes[beatmap->noteCount].position = notePosition; // Initialize the notes
         beatmap->notes[beatmap->noteCount].isPressed = 0;
@@ -215,13 +215,13 @@ void FreeBeatmap(Beatmap* beatmap) {
     free(beatmap);
 }
 
-int GetBeatmapInfoInt(char* line) {
+float GetBeatmapInfoFloat(char* line) {
 
     char* spaceSeperator = strtok(line, ":");
     spaceSeperator = strtok(NULL, ":");
     spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
 
-    return strtol(spaceSeperator, NULL, 10);
+    return strtof(spaceSeperator, NULL);
 }
 
 char* GetBeatmapInfoString(char* line) {

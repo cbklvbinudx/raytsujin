@@ -1,5 +1,3 @@
-#include <string.h>
-#include <stdlib.h>
 #include "raylib.h"
 #include "mainMenu.h"
 #include "config.h"
@@ -13,23 +11,24 @@ void DrawMainMenu() {
     ClearBackground(WHITE);
 
     if(currentBeatmap)
-        DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, screenWidth, screenHeight },
-                       (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
+        DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight },
+                       (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight }, (Vector2) { 0, 0 }, 0,
                        WHITE);
 
-    DrawTextEx(GetFontDefault(), "RAYTSUJIN",(Vector2) { 10,screenHeight - 86 }, 100, 8,GRAY);
+    DrawTextEx(GetFontDefault(), "RAYTSUJIN",(Vector2) { 10,(float)screenHeight - 86 }, 100, 8,GRAY);
 
     DrawRectangleGradientV(0, 0, screenWidth, screenHeight, BLACK, BLANK);
 
-    GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2 , screenWidth / 3, screenHeight / 7 },
-                                "Drop a file with the .osu extension on the window to play!");
+    Rectangle buttonRectangle = { (float)screenWidth / 2.0f - (float)screenWidth / 3.0f / 2.0f,
+                                  (float)screenHeight / 2.0f - (float)screenHeight / 7.0f / 2.0f ,
+                                  (float)screenWidth / 3.0f, (float)screenHeight / 7.0f};
+
+    GuiButton(buttonRectangle,"Drop a file with the .osu extension on the window to play!");
 
     if(currentBeatmap) {
-
         DrawText(TextFormat("Currently loaded map: %s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName), 2, 2, 20, GRAY);
 
-        gameStateSwitch = GuiButton((Rectangle){ screenWidth / 2 - screenWidth / 3 / 2, screenHeight / 2 - screenHeight / 7 / 2, screenWidth / 3, screenHeight / 7 },
-                                    "File loaded! Press this button or ENTER to play.");
+        gameStateSwitch = GuiButton(buttonRectangle, "File loaded! Press this button or ENTER to play.");
     }
 
     EndDrawing();

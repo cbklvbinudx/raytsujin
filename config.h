@@ -2,7 +2,7 @@
 
 extern int gameStateSwitch;
 extern int lastGameState;
-extern const float scrollFieldOffset;
+extern const int scrollFieldOffset;
 extern int screenWidth;
 extern int screenHeight;
 

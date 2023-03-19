@@ -4,7 +4,7 @@
 typedef struct Note {
     Vector2 position;
     int sliderVelocity;
-    int timing;
+    float timing;
     int isBlue;
     int bigNote;
     int isPressed;
@@ -14,8 +14,8 @@ typedef struct Note {
 typedef struct Beatmap {
     Note* notes;
     int noteCount;
-    int hpDrain;
-    int od;
+    float hpDrain;
+    float od;
     char* title;
     char* artist;
     char* difficultyName;
@@ -37,7 +37,7 @@ void FreeBeatmap(Beatmap* beatmap);
 void LoadBeatmapAudio(Beatmap* beatmap);
 void LoadBeatmapBackground(Beatmap* beatmap);
 
-int GetBeatmapInfoInt(char* line);
+float GetBeatmapInfoFloat(char* line);
 char* GetBeatmapInfoString(char* line);
 
 void ResetGameplayVariables();

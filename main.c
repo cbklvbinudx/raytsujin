@@ -23,7 +23,7 @@ enum Judgements {
 
 float songTimeElapsed;
 
-int lastNoteTiming = 0; // Used for judgement feedback images (hit, miss)
+float lastNoteTiming = 0.0f; // Used for judgement feedback images (hit, miss)
 int currentNote = 0;
 float deltaPress = 0;
 
@@ -38,9 +38,9 @@ Texture2D taikoGreat;
 
 const float scrollFieldHeight = 100.0f;
 const float destinationCircleOffset = 100.0f;
-const float scrollFieldOffset = 50.0f;
+const int scrollFieldOffset = 50;
 
-const Vector2 destinationCirclePosition = { destinationCircleOffset, scrollFieldHeight / 2 + scrollFieldOffset};
+const Vector2 destinationCirclePosition = { destinationCircleOffset, scrollFieldHeight / 2 + (float)scrollFieldOffset};
 
 int screenWidth = 1600;
 int screenHeight = 900;
@@ -160,13 +160,13 @@ void DrawElementsPlaying() {
         currentBeatmap->notes[i].position.x = destinationCircleOffset + currentBeatmap->notes[i].timing - songTimeElapsed;
     }    
 
-    if(judgementSwitch == Miss && songTimeElapsed - lastNoteTiming < 300) {
+    if(judgementSwitch == Miss && songTimeElapsed - (float)lastNoteTiming < 300) {
         DrawTexture(taikoMiss, -30, -50 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
-    if(judgementSwitch == Great && songTimeElapsed - lastNoteTiming < 300) {
+    if(judgementSwitch == Great && songTimeElapsed - (float)lastNoteTiming < 300) {
         DrawTexture(taikoGreat, -50, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
-    if(judgementSwitch == Good && songTimeElapsed - lastNoteTiming < 300) {
+    if(judgementSwitch == Good && songTimeElapsed - (float)lastNoteTiming < 300) {
         DrawTexture(taikoGood, -50, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
@@ -181,29 +181,29 @@ void DrawElementsPlaying() {
 }
 
 void DrawPlayfield() {
-    DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, screenWidth, screenHeight },
-                   (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
+    DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight },
+                   (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
-    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
+    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, (int)scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawCircleGradient(0, screenHeight, 150, BLACK, BLANK);
     DrawCircleV(destinationCirclePosition, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
 void DrawNote(Note* taikoNote) {
-    if(taikoNote->position.x <= screenWidth + scrollFieldHeight / 2 + 15 && taikoNote->position.x >= -scrollFieldHeight / 2 - 15) {
+    if(taikoNote->position.x <= (float)screenWidth + scrollFieldHeight / 2 + 15 && taikoNote->position.x >= -scrollFieldHeight / 2 - 15) {
         if (taikoNote->bigNote) {
             DrawCircleV(taikoNote->position, scrollFieldHeight / 2 + 15, taikoNote->noteColor);
-            DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2 + 15, BLACK);
+            DrawCircleLines((int)taikoNote->position.x, (int)taikoNote->position.y, scrollFieldHeight / 2 + 15, BLACK);
 
         } else {
             DrawCircleV(taikoNote->position, scrollFieldHeight / 2, taikoNote->noteColor);
-            DrawCircleLines(taikoNote->position.x, taikoNote->position.y, scrollFieldHeight / 2, BLACK);
+            DrawCircleLines((int)taikoNote->position.x, (int)taikoNote->position.y, scrollFieldHeight / 2, BLACK);
         }
     }
 }
 
 void UpdateGamePlaying() {
-    int noteTiming = currentBeatmap->notes[currentNote].timing;
+    float noteTiming = currentBeatmap->notes[currentNote].timing;
     int hit = (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0;
 
     int isBluePressed = (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K));
