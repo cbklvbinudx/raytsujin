@@ -203,21 +203,21 @@ void DrawNote(Note* taikoNote) {
 }
 
 void UpdateGamePlaying() {
-    int timingProper = currentBeatmap->notes[currentNote].timing;
+    int noteTiming = currentBeatmap->notes[currentNote].timing;
+    int hit = (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0;
 
-    deltaPress = fabsf(timingProper - songTimeElapsed);
+    int isBluePressed = (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K));
+    int isRedPressed = (IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J));
 
-    if((timingProper < songTimeElapsed - hitWindowGood)) {
+    deltaPress = fabsf(noteTiming - songTimeElapsed);
+
+    if((songTimeElapsed - noteTiming > hitWindowGood)) {
         // If no note pressed in time
-        comboCounter = 0;
-        PlaySound(comboBreak);
-        currentNote++;
-        missCounter++;
-        judgementSwitch = Miss;
+        NoteMiss();
     }
     // Blue note logic
     else if(currentBeatmap->notes[currentNote].isBlue) {
-        if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
+        if(isBluePressed && hit){
             // If note is hit
             if(deltaPress < hitWindowGreat) {
                 NoteHit(Great);
@@ -226,13 +226,13 @@ void UpdateGamePlaying() {
             } else {
                 NoteMiss();
             }
-        } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
+        } else if(isRedPressed && hit){
             // If wrong note is pressed
             NoteMiss();
         }
     // Red note logic
     } else {
-        if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
+        if(isRedPressed && hit) {
             // If note is hit
             if(deltaPress < hitWindowGreat) {
                 NoteHit(Great);
@@ -241,7 +241,7 @@ void UpdateGamePlaying() {
             } else {
                 NoteMiss();
             }
-        } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
+        } else if(isBluePressed && hit) {
             // If wrong note is pressed
             NoteMiss();
         }
@@ -276,7 +276,6 @@ void RetryButton() {
 }
 
 void ResetGameplayVariables() {
-
     for(int i = 0; i < currentBeatmap->noteCount; i++) {
         currentBeatmap->notes[i].isPressed = 0;
         currentBeatmap->notes[i].noteColor = currentBeatmap->notes[i].isBlue?BLUE:RED;
