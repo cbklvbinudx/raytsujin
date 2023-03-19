@@ -15,14 +15,15 @@ enum SectionEnum {
     HitObjects,
 };
 
-int currentSection = 0;
-long int hitObjectsPosition;
 
 Beatmap* currentBeatmap = NULL;
 
 Beatmap* LoadBeatmapFromFile(const char* fileName) {
     Beatmap* beatmap = malloc(sizeof(Beatmap));
     beatmap->noteCount = 0;
+
+    int currentSection = 0;
+    long int hitObjectsPosition;
 
     FILE* filePointer;
 
