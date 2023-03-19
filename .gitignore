@@ -2,3 +2,4 @@
 /main.exe
 /resources/Songs/*
 /cmake-build-debug/
+/cmake-build-release/

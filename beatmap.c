@@ -15,6 +15,9 @@ enum SectionEnum {
     HitObjects,
 };
 
+float hitWindowGreat;
+float hitWindowGood;
+float hitWindowMiss;
 
 Beatmap* currentBeatmap = NULL;
 
@@ -104,6 +107,19 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
             }
             else if(strstr(line, "OverallDifficulty:")) {
                 beatmap->od = GetBeatmapInfoInt(line);
+                if(beatmap->od < 5) {
+                    hitWindowGreat = 35 - (35 - 50) * (5 - beatmap-> od) / 5;
+                    hitWindowGood = 80 - (80 - 120) * (5 - beatmap->od) / 5;
+                    hitWindowMiss = 95 - (95 - 135) * (5 - beatmap->od) / 5;
+                } else if(beatmap->od > 5) {
+                    hitWindowGreat = 35 + (20 - 35) * (beatmap->od - 5) / 5;
+                    hitWindowGood = 80 + (50 - 80) * (beatmap->od - 5) / 5;
+                    hitWindowMiss = 95 + (70 - 95) * (beatmap->od - 5) / 5;
+                } else {
+                    hitWindowGreat = 35;
+                    hitWindowGood = 80;
+                    hitWindowMiss = 95;
+                }
             }
         }
         // Counting the amount of hitobjects in order to allocate enough memory later

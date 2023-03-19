@@ -27,6 +27,9 @@ typedef struct Beatmap {
 } Beatmap;
 
 extern Beatmap* currentBeatmap;
+extern float hitWindowGreat;
+extern float hitWindowGood;
+extern float hitWindowMiss;
 
 Beatmap* LoadBeatmapFromFile(const char* filename);
 void FreeBeatmap(Beatmap* beatmap);
