@@ -32,7 +32,6 @@ int missCounter = 0;
 int goodCounter = 0;
 int greatCounter = 0;
 
-Texture2D mapBackground;
 Texture2D taikoMiss;
 Texture2D taikoGood;
 Texture2D taikoGreat;
@@ -53,7 +52,6 @@ float currentVolume = 1.0f;
 Sound redSound;
 Sound blueSound;
 Sound comboBreak;
-Music audio;
 
 Image icon;
 
@@ -89,21 +87,21 @@ int main() {
         }
         else if(gameStateSwitch == Playing) {
             if(lastGameState != Playing) {
-                PlayMusicStream(audio);
+                PlayMusicStream(currentBeatmap->audio);
             }
-            if(GetMusicTimePlayed(audio) > GetMusicTimeLength(audio) - 0.01) {
+            if(GetMusicTimePlayed(currentBeatmap->audio) > GetMusicTimeLength(currentBeatmap->audio) - 0.01) {
                 gameStateSwitch = Finished;
             }
-            songTimeElapsed = GetMusicTimePlayed(audio) * 1000; // Time played in milliseconds, for use with .osu file timing
+            songTimeElapsed = GetMusicTimePlayed(currentBeatmap->audio) * 1000; // Time played in milliseconds, for use with .osu file timing
             lastGameState = Playing;
-            UpdateMusicStream(audio);
+            UpdateMusicStream(currentBeatmap->audio);
             UpdateGamePlaying();
             DrawElementsPlaying();
         } else if(gameStateSwitch == Finished) {
             DrawFinishScreen();
             UpdateFinishScreen();
             if(lastGameState != Finished) {
-                StopMusicStream(audio);
+                StopMusicStream(currentBeatmap->audio);
             }
             lastGameState = Finished;
         }
@@ -119,7 +117,6 @@ int main() {
 
     CloseAudioDevice();
 
-    UnloadTexture(mapBackground);
     UnloadTexture(taikoGreat);
     UnloadTexture(taikoMiss);
     UnloadImage(icon);
@@ -127,13 +124,9 @@ int main() {
     UnloadSound(redSound);
     UnloadSound(blueSound);
     UnloadSound(comboBreak);
-    UnloadMusicStream(audio);
 
-    if(currentBeatmap) {
+    if(currentBeatmap)
         FreeBeatmap(currentBeatmap);
-        free(extractedFilePath);
-        free(previousExtractedFilePath);
-    }
 
     CloseWindow();
 
@@ -190,7 +183,7 @@ void DrawElementsPlaying() {
 }
 
 void DrawPlayfield() {
-    DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
+    DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, screenWidth, screenHeight },
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
@@ -304,7 +297,7 @@ void UpdateGamePlaying() {
         RetryButton();
     }
     if(IsKeyPressed(KEY_ESCAPE) && gameStateSwitch == Playing) {
-        StopMusicStream(audio);
+        StopMusicStream(currentBeatmap->audio);
         gameStateSwitch = Menu;
         lastGameState = Menu;
 
@@ -313,9 +306,9 @@ void UpdateGamePlaying() {
 }
 
 void RetryButton() {
-    if(IsMusicStreamPlaying(audio)) {
-        StopMusicStream(audio);
-        PlayMusicStream(audio);
+    if(IsMusicStreamPlaying(currentBeatmap->audio)) {
+        StopMusicStream(currentBeatmap->audio);
+        PlayMusicStream(currentBeatmap->audio);
 
         ResetGameplayVariables();
     }

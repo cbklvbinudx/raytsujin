@@ -9,7 +9,7 @@ int backButtonSwitch = 0;
 void DrawFinishScreen() {
     BeginDrawing();
 
-    DrawTexturePro(mapBackground, (Rectangle) { 0, 0, screenWidth, screenHeight },
+    DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, screenWidth, screenHeight },
                    (Rectangle) { 0, 0, screenWidth, screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
     DrawRectangleGradientV(0, 0, screenWidth, screenHeight, BLACK, BLANK);
