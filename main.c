@@ -3,7 +3,6 @@
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
-#include <stdlib.h>
 #include "finishScreen.h"
 #include "raygui.h"
 
@@ -12,6 +11,8 @@ void DrawPlayfield();
 void DrawNote(Note* taikoNote);
 void UpdateGamePlaying();
 void RetryButton();
+void NoteHit(int judgement);
+void NoteMiss();
 
 enum Judgements {
     Great,
@@ -218,74 +219,31 @@ void UpdateGamePlaying() {
     else if(currentBeatmap->notes[currentNote].isBlue) {
         if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
             // If note is hit
-            currentBeatmap->notes[currentNote].isPressed = 1;
-            currentBeatmap->notes[currentNote].noteColor = Fade(BLUE, 0.4f);
-
-            lastNoteTiming = timingProper;
             if(deltaPress < hitWindowGreat) {
-                judgementSwitch = Great;
-                greatCounter++;
-                comboCounter++;
+                NoteHit(Great);
             } else if(deltaPress < hitWindowGood){
-                judgementSwitch = Good;
-                goodCounter++;
-                comboCounter++;
+                NoteHit(Good);
             } else {
-                PlaySound(comboBreak);
-                comboCounter = 0;
-                missCounter++;
+                NoteMiss();
             }
-            currentNote++;
         } else if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
             // If wrong note is pressed
-
-            PlaySound(comboBreak);
-
-            currentBeatmap->notes[currentNote].isPressed = 1;
-            currentBeatmap->notes[currentNote].noteColor = BLANK;
-
-            lastNoteTiming = timingProper;
-            judgementSwitch = Miss;
-            comboCounter = 0;
-            currentNote++;
-            missCounter++;
+            NoteMiss();
         }
     // Red note logic
     } else {
         if((IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
             // If note is hit
-            currentBeatmap->notes[currentNote].isPressed = 1;
-            currentBeatmap->notes[currentNote].noteColor = Fade(RED, 0.4f);
-
-            lastNoteTiming = timingProper;
             if(deltaPress < hitWindowGreat) {
-                judgementSwitch = Great;
-                greatCounter++;
-                comboCounter++;
+                NoteHit(Great);
             } else if(deltaPress < hitWindowGood){
-                judgementSwitch = Good;
-                goodCounter++;
-                comboCounter++;
+                NoteHit(Good);
             } else {
-                PlaySound(comboBreak);
-                comboCounter = 0;
-                missCounter++;
+                NoteMiss();
             }
-
-            currentNote++;
         } else if((IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) && (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0) {
             // If wrong note is pressed
-
-            PlaySound(comboBreak);
-
-            currentBeatmap->notes[currentNote].isPressed = 1;
-            currentBeatmap->notes[currentNote].noteColor = BLANK;
-
-            lastNoteTiming = timingProper;
-            judgementSwitch = Miss;
-            comboCounter = 0;
-            currentNote++;
-            missCounter++;
+            NoteMiss();
         }
     }
     if(GetKeyPressed() == 0) {
@@ -331,4 +289,31 @@ void ResetGameplayVariables() {
     judgementSwitch = Unhit;
     lastNoteTiming = 0;
     currentNote = 0;
+}
+
+void NoteHit(int judgement) {
+    currentBeatmap->notes[currentNote].isPressed = 1;
+    currentBeatmap->notes[currentNote].noteColor = Fade(BLUE, 0.4f);
+    if(judgement == Great) {
+        greatCounter++;
+    } else if(judgement == Good) {
+        goodCounter++;
+    }
+    comboCounter++;
+    judgementSwitch = judgement;
+    lastNoteTiming = currentBeatmap->notes[currentNote].timing;
+    currentNote++;
+}
+
+void NoteMiss() {
+    PlaySound(comboBreak);
+
+    currentBeatmap->notes[currentNote].isPressed = 1;
+    currentBeatmap->notes[currentNote].noteColor = BLANK;
+
+    lastNoteTiming = currentBeatmap->notes[currentNote].timing;
+    judgementSwitch = Miss;
+    comboCounter = 0;
+    currentNote++;
+    missCounter++;
 }
