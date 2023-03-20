@@ -19,8 +19,6 @@ if (NOT raylib_FOUND) # If there's none, fetch and build raylib
     set(FETCHCONTENT_QUIET NO)
     FetchContent_Populate(raylib)
     set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE) # don't build the supplied examples
-    set(CUSTOMIZE_BUILD On)
-    set(SUPPORT_FILEFORMAT_JPG On)
     add_subdirectory(${raylib_SOURCE_DIR} ${raylib_BINARY_DIR})
   endif()
 endif()
@@ -30,10 +28,12 @@ endif()
 add_executable(${PROJECT_NAME} main.c beatmap.c mainMenu.c finishScreen.c finishScreen.h rayguiImpl.c)
 #set(raylib_VERBOSE 1)
 
-set(CMAKE_C_FLAGS "-static")
+if(WIN32)
+    set(CMAKE_C_FLAGS "-static")
+    find_package(Threads REQUIRED)
+    target_link_libraries(${PROJECT_NAME} Threads::Threads)
+endif()
 
-find_package(Threads REQUIRED)
-target_link_libraries(${PROJECT_NAME} Threads::Threads)
 target_link_libraries(${PROJECT_NAME} raylib)
 
 # Web Configurations
