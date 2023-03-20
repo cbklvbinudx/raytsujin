@@ -180,26 +180,14 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
 }
 
 void LoadBeatmapAudio(Beatmap* beatmap) {
-    char *beatmapAudioPath = malloc(
-            strlen(beatmap->directory) + strlen(beatmap->audioFileName) + 2); // + 2 for the terminator and for the backslash
-    strcpy(beatmapAudioPath, beatmap->directory);
-    strcat(beatmapAudioPath, "/");
-    strcat(beatmapAudioPath, beatmap->audioFileName);
-    beatmap->audio = LoadMusicStream(beatmapAudioPath);
-    free(beatmapAudioPath);
+    beatmap->audio = LoadMusicStream(TextFormat("%s/%s", beatmap->directory, beatmap->audioFileName));
 }
 
 void LoadBeatmapBackground(Beatmap* beatmap) {
-    char *beatmapBackgroundPath = malloc(
-            strlen(beatmap->directory) + strlen(beatmap->backgroundFileName) + 2); // + 2 for the terminator and for the backslash
-    strcpy(beatmapBackgroundPath, beatmap->directory);
-    strcat(beatmapBackgroundPath, "/");
-    strcat(beatmapBackgroundPath, beatmap->backgroundFileName);
-    Image mapBackgroundImage = LoadImage(beatmapBackgroundPath);
+    Image mapBackgroundImage = LoadImage(TextFormat("%s/%s", beatmap->directory, beatmap->backgroundFileName));
     ImageResize(&mapBackgroundImage, screenWidth, screenHeight);
     beatmap->background = LoadTextureFromImage(mapBackgroundImage);
     UnloadImage(mapBackgroundImage);
-    free(beatmapBackgroundPath);
 }
 
 void FreeBeatmap(Beatmap* beatmap) {
