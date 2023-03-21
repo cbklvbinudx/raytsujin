@@ -30,7 +30,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
 
     FILE* filePointer;
 
-    char line[512] = { 0 };
+    char line[2048] = { 0 };
 
     filePointer = fopen(fileName, "r");
 
@@ -133,7 +133,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
     beatmap->noteCount = 0;
     // We skip to the [HitObjects] section and fill in the notes data
     fseek(filePointer, hitObjectsPosition, SEEK_SET);
-    while (fgets(line, 512, filePointer)) {
+    while (fgets(line, 2048, filePointer)) {
 
         char *commaSection = strtok(line, ",");
         commaSection = strtok(NULL, ",");
