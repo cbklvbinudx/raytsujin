@@ -6,3 +6,5 @@ void UpdateFinishScreen();
 extern int missCounter;
 extern int goodCounter;
 extern int greatCounter;
+
+extern float accuracy;

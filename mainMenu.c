@@ -26,7 +26,8 @@ void DrawMainMenu() {
     GuiButton(buttonRectangle,"Drop a file with the .osu extension on the window to play!");
 
     if(currentBeatmap) {
-        DrawText(TextFormat("Currently loaded map: %s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName), 2, 2, 20, GRAY);
+        DrawTextEx(GuiGetFont(), TextFormat("Currently loaded map: %s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName),
+                   (Vector2) { 2, 2 }, 20, 2, GRAY);
 
         gameStateSwitch = GuiButton(buttonRectangle, "File loaded! Press this button or ENTER to play.");
     }
