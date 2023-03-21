@@ -68,9 +68,10 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
 
         if(strstr(line, "AudioFilename: ") && currentSection == General) {
 
-            char* spaceSeperator = strtok(line, " ");
-            spaceSeperator = strtok(NULL, " ");
+            char* spaceSeperator = strtok(line, ":");
+            spaceSeperator = strtok(NULL, ":");
             spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
+            spaceSeperator += 1; // We delete the space in the first character
 
 #if defined(__linux__)
             spaceSeperator[strlen(spaceSeperator) - 1] = '\0'; // Linux detects two line endings here, so we have to strip another one
