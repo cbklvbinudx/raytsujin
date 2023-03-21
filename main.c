@@ -305,7 +305,8 @@ void ResetGameplayVariables() {
 
 void NoteHit(int judgement) {
     currentBeatmap->notes[currentNote].isPressed = 1;
-    currentBeatmap->notes[currentNote].noteColor = Fade(BLUE, 0.4f);
+    currentBeatmap->notes[currentNote].noteColor = currentBeatmap->notes[currentNote].isBlue?Fade(BLUE, 0.4f):Fade(RED, 0.4f);
+
     if(judgement == Great) {
         greatCounter++;
     } else if(judgement == Good) {
