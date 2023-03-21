@@ -172,12 +172,15 @@ void DrawElementsPlaying() {
     }
 
     DrawFPS(2, 0);
-    DrawText(TextFormat("Misses: %i", missCounter), 2, screenHeight - 100, 16, WHITE);
-    DrawText(TextFormat("Good: %i", goodCounter), 2, screenHeight - 80, 16, WHITE);
-    DrawText(TextFormat("Great: %i", greatCounter), 2, screenHeight - 60, 16, WHITE);
-    DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, WHITE);
+    DrawTextEx(GuiGetFont(),TextFormat("Misses: %i", missCounter), (Vector2) { 2, (float)screenHeight - 115 }, 20, 2, WHITE);
+    DrawTextEx(GuiGetFont(), TextFormat("Good: %i", goodCounter), (Vector2) { 2, (float)screenHeight - 95 }, 20, 2, WHITE);
+    DrawTextEx(GuiGetFont(), TextFormat("Great: %i", greatCounter), (Vector2) { 2, (float)screenHeight - 75 }, 20, 2, WHITE);
+    DrawTextEx(GuiGetFont(), TextFormat("%ix", comboCounter), (Vector2) { 2, (float)screenHeight - 65 }, 68, 2, WHITE);
 
-    DrawText(TextFormat("%.2f%%", accuracy),2, screenHeight - 140, 48, WHITE);
+    DrawTextEx(GuiGetFont(), TextFormat("%.2f%%", accuracy),
+               (Vector2) { (float)screenWidth - MeasureTextEx(GuiGetFont(), TextFormat("%.2f%%", accuracy), 68, 2).x,
+                           (float)screenHeight - 65 },
+               68, 2, WHITE);
 
     EndDrawing();
 }
@@ -187,7 +190,8 @@ void DrawPlayfield() {
                    (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
     DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, (int)scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
-    DrawCircleGradient(0, screenHeight, 150, BLACK, BLANK);
+    DrawCircleGradient(0, screenHeight, 250, BLACK, BLANK);
+    DrawCircleGradient(screenWidth, screenHeight, 250, BLACK, BLANK);
     DrawCircleV(destinationCirclePosition, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
