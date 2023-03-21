@@ -139,7 +139,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         commaSection = strtok(NULL, ",");
         // We move to the timing section with this (after the second comma)
 
-        beatmap->notes[beatmap->noteCount].timing = strtof(commaSection, NULL); // Converting the string to an integer
+        beatmap->notes[beatmap->noteCount].timing = strtof(commaSection, NULL); // Converting the string to a float
         beatmap->notes[beatmap->noteCount].position = notePosition; // Initialize the notes
         beatmap->notes[beatmap->noteCount].isPressed = 0;
         beatmap->notes[beatmap->noteCount].sliderVelocity = 1;

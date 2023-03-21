@@ -46,6 +46,7 @@ int screenWidth = 1600;
 int screenHeight = 900;
 
 float currentVolume = 1.0f;
+float accuracy = 1.0f;
 
 Sound redSound;
 Sound blueSound;
@@ -170,12 +171,13 @@ void DrawElementsPlaying() {
         DrawTexture(taikoGood, -50, -40 + scrollFieldOffset, WHITE); // TODO: Animate this (fade in fade out or scale)
     }
 
-
     DrawFPS(2, 0);
     DrawText(TextFormat("Misses: %i", missCounter), 2, screenHeight - 100, 16, WHITE);
     DrawText(TextFormat("Good: %i", goodCounter), 2, screenHeight - 80, 16, WHITE);
     DrawText(TextFormat("Great: %i", greatCounter), 2, screenHeight - 60, 16, WHITE);
     DrawText(TextFormat("%ix", comboCounter), 2, screenHeight - 40, 48, WHITE);
+
+    DrawText(TextFormat("%.2f%%", accuracy),2, screenHeight - 140, 48, WHITE);
 
     EndDrawing();
 }
@@ -203,6 +205,13 @@ void DrawNote(Note* taikoNote) {
 }
 
 void UpdateGamePlaying() {
+
+    if(currentNote == 0) {
+        accuracy = 100 * 1.0f;
+    } else {
+        accuracy = 100 * ((float)greatCounter + (float)goodCounter / 2.0f) / ((float)greatCounter + (float)goodCounter + (float)missCounter);
+    }
+
     float noteTiming = currentBeatmap->notes[currentNote].timing;
     int hit = (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0;
 
