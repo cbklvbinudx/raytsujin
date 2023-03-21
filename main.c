@@ -138,6 +138,12 @@ void DrawElementsPlaying() {
     ClearBackground(RAYWHITE);
     DrawPlayfield();
 
+    if(currentBeatmap->notes[0].timing - songTimeElapsed > 1500) {
+        DrawRectangleGradientV(screenWidth / 2 - 400 / 2, screenHeight - 100, 400, 100, BLANK, Fade(BLACK, 0.6f));
+        DrawTextEx(GuiGetFont(), "SKIP",
+                   (Vector2) { (float)screenWidth / 2 - MeasureTextEx(GuiGetFont(), "SKIP",68, 2).x / 2,
+                               (float)screenHeight - 65 }, 68, 2, WHITE);
+    }
 
     if(IsKeyDown(KEY_K)) {
         DrawCircleSector(destinationCirclePosition, scrollFieldHeight / 2, 0, 180, 16, BLUE);
@@ -259,7 +265,10 @@ void UpdateGamePlaying() {
             NoteMiss();
         }
     }
-    if(GetKeyPressed() == 0) {
+    if(currentBeatmap->notes[0].timing - songTimeElapsed > 1000) {
+        if(IsKeyPressed(KEY_SPACE)) {
+            SeekMusicStream(currentBeatmap->audio, (currentBeatmap->notes[0].timing - 1500) / 1000);
+        }
     }
     if(IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K)) {
         PlaySound(blueSound);

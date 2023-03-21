@@ -38,7 +38,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
     // Initialized at the right end of the screen
     Vector2 notePosition = { 800.0f, 50.0f + (float)scrollFieldOffset };
 
-    while(fgets(line, 512, filePointer)) {
+    while(fgets(line, 2048, filePointer)) {
 
         if(strstr(line, "[General]")) {
             currentSection = General;
