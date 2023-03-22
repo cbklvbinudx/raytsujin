@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "beatmap.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -66,20 +67,8 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
             continue;
         }
 
-        if(strstr(line, "AudioFilename: ") && currentSection == General) {
-
-            char* spaceSeperator = strtok(line, ":");
-            spaceSeperator = strtok(NULL, ":");
-            spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
-            spaceSeperator += 1; // We delete the space in the first character
-
-#if defined(__linux__)
-            spaceSeperator[strlen(spaceSeperator) - 1] = '\0'; // Linux detects two line endings here, so we have to strip another one
-#endif
-
-            char* audioName = malloc(strlen(spaceSeperator) + 1);
-            strcpy(audioName, spaceSeperator);
-            beatmap->audioFileName = audioName;
+        if(strstr(line, "AudioFilename:") && currentSection == General) {
+            beatmap->audioFileName = GetBeatmapInfoString(line);
         }
         else if(currentSection == Metadata) {
             if (strstr(line, "Title:")) {
@@ -92,12 +81,11 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         }
         else if(currentSection == Events) {
             if(strstr(line, "0,0,")) {
+                strtok(line, "\"");
+                const char *backgroundNamePtr = strtok(NULL, "\"");
 
-                char* spaceSeperator = strtok(line, "\"");
-                spaceSeperator = strtok(NULL, "\"");
-
-                char* backgroundName = malloc(strlen(spaceSeperator) + 1);
-                strcpy(backgroundName, spaceSeperator);
+                char* backgroundName = malloc(strlen(backgroundNamePtr) + 1);
+                strcpy(backgroundName, backgroundNamePtr);
 
                 beatmap->backgroundFileName = backgroundName;
             }
@@ -135,27 +123,34 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
     fseek(filePointer, hitObjectsPosition, SEEK_SET);
     while (fgets(line, 2048, filePointer)) {
 
-        char *commaSection = strtok(line, ",");
-        commaSection = strtok(NULL, ",");
-        commaSection = strtok(NULL, ",");
-        // We move to the timing section with this (after the second comma)
+        const char *x_str = strtok(line, ",");
+        const char *y_str = strtok(NULL, ",");
+        const char *time_str = strtok(NULL, ",");
+        const char *type_str = strtok(NULL, ",");
+        const char *hitsound_str = strtok(NULL, ",");
+        const char *objParams = strtok(NULL, ",");
+        const char *hitSample = strtok(NULL, ",");
 
-        beatmap->notes[beatmap->noteCount].timing = strtof(commaSection, NULL); // Converting the string to a float
+        if(!(x_str && y_str && time_str && type_str && objParams && hitSample)) {
+            printf("File is misformatted");
+            abort(); // TODO: actually handle the error somehow
+        }
+
+        beatmap->notes[beatmap->noteCount].timing = strtof(time_str, NULL); // Converting the string to a float
         beatmap->notes[beatmap->noteCount].position = notePosition; // Initialize the notes
         beatmap->notes[beatmap->noteCount].isPressed = 0;
         beatmap->notes[beatmap->noteCount].sliderVelocity = 1;
 
-        commaSection = strtok(NULL, ",");
-        commaSection = strtok(NULL, ",");
-        // We move to the hitsound section with this (after the fifth comma)
+        int hitsound = strtol(hitsound_str, NULL, 10);
 
-        if (*commaSection == '0') {
+        // TODO: properly read the flags
+        if (!(hitsound & 1)) {
             beatmap->notes[beatmap->noteCount].isBlue = 0;
             beatmap->notes[beatmap->noteCount].bigNote = 0;
-        } else if (*commaSection == '4') {
+        } else if (hitsound & 4) {
             beatmap->notes[beatmap->noteCount].isBlue = 0;
             beatmap->notes[beatmap->noteCount].bigNote = 1;
-        } else if (*commaSection == '6' || strcmp(commaSection, "12") == 0) {
+        } else if (hitsound & 6 || ~hitsound & 12) {
             beatmap->notes[beatmap->noteCount].isBlue = 1;
             beatmap->notes[beatmap->noteCount].bigNote = 1;
         } else {
@@ -204,22 +199,28 @@ void FreeBeatmap(Beatmap* beatmap) {
 }
 
 float GetBeatmapInfoFloat(char* line) {
-
-    char* spaceSeperator = strtok(line, ":");
-    spaceSeperator = strtok(NULL, ":");
-    spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
-
-    return strtof(spaceSeperator, NULL);
+    char* valuePtr = GetBeatmapInfoString(line);
+    float ret = strtof(valuePtr, NULL);
+    free(valuePtr);
+    return ret;
 }
 
 char* GetBeatmapInfoString(char* line) {
 
-    char* spaceSeperator = strtok(line, ":");
-    spaceSeperator = strtok(NULL, ":");
-    spaceSeperator[strlen(spaceSeperator) - 1] = '\0';
+    strtok(line, ":");
+    char* valuePtr = strtok(NULL, ":");
 
-    char* returnString = malloc(strlen(spaceSeperator) + 1);
-    strcpy(returnString, spaceSeperator);
+    // Skip leading whitespace
+    while(isspace(*valuePtr)) {
+        valuePtr++;
+    }
+
+    // Replace trailing whitespace with null
+    for(char* endPtr = valuePtr + strlen(valuePtr) - 1; !isspace(*valuePtr) && endPtr >= valuePtr; endPtr--) 
+        *endPtr ='\0';
+
+    char* returnString = malloc(strlen(valuePtr) + 1);
+    strcpy(returnString, valuePtr);
 
     return returnString;
 }
