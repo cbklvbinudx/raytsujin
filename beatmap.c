@@ -69,54 +69,59 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
             continue;
         }
 
-        if(strstr(line, "AudioFilename:") && currentSection == General) {
-            beatmap->audioFileName = GetBeatmapInfoString(line);
-        }
-        else if(currentSection == Metadata) {
-            if (strstr(line, "Title:")) {
-                beatmap->title = GetBeatmapInfoString(line);
-            } else if (strstr(line, "Artist:")) {
-                beatmap->artist = GetBeatmapInfoString(line);
-            } else if (strstr(line, "Version:")) {
-                beatmap->difficultyName = GetBeatmapInfoString(line);
-            }
-        }
-        else if(currentSection == Events) {
-            if(strstr(line, "0,0,")) {
-                strtok(line, "\"");
-                const char *backgroundNamePtr = strtok(NULL, "\"");
+        switch(currentSection) {
+            case General:
+                if(strstr(line, "AudioFilename:")) 
+                    beatmap->audioFileName = GetBeatmapInfoString(line);
+                break;
 
-                char* backgroundName = malloc(strlen(backgroundNamePtr) + 1);
-                strcpy(backgroundName, backgroundNamePtr);
+            case Metadata:
+                if (strstr(line, "Title:")) 
+                    beatmap->title = GetBeatmapInfoString(line);
+                else if (strstr(line, "Artist:")) 
+                    beatmap->artist = GetBeatmapInfoString(line);
+                else if (strstr(line, "Version:")) 
+                    beatmap->difficultyName = GetBeatmapInfoString(line);
+                break;
 
-                beatmap->backgroundFileName = backgroundName;
-            }
-        }
-        else if(currentSection == Difficulty) {
-            if(strstr(line, "HPDrainRate:")) {
-                beatmap->hpDrain = GetBeatmapInfoFloat(line);
-            }
-            else if(strstr(line, "OverallDifficulty:")) {
-                beatmap->od = GetBeatmapInfoFloat(line);
-                if(beatmap->od < 5) {
-                    hitWindowGreat = 35.0f - (35.0f - 50.0f) * (5.0f - beatmap-> od) / 5.0f;
-                    hitWindowGood = 80.0f - (80.0f - 120.0f) * (5.0f - beatmap->od) / 5.0f;
-                    hitWindowMiss = 95.0f - (95.0f - 135.0f) * (5.0f - beatmap->od) / 5.0f;
-                } else if(beatmap->od > 5) {
-                    hitWindowGreat = 35.0f + (20.0f - 35.0f) * (beatmap->od - 5.0f) / 5.0f;
-                    hitWindowGood = 80.0f + (50.0f - 80.0f) * (beatmap->od - 5.0f) / 5.0f;
-                    hitWindowMiss = 95.0f + (70.0f - 95.0f) * (beatmap->od - 5.0f) / 5.0f;
-                } else {
-                    hitWindowGreat = 35;
-                    hitWindowGood = 80;
-                    hitWindowMiss = 95;
+            case Events:
+                if(strstr(line, "0,0,")) {
+                    strtok(line, "\"");
+                    const char *backgroundNamePtr = strtok(NULL, "\"");
+
+                    char* backgroundName = malloc(strlen(backgroundNamePtr) + 1);
+                    strcpy(backgroundName, backgroundNamePtr);
+
+                    beatmap->backgroundFileName = backgroundName;
                 }
-            }
+                break;
+
+            case Difficulty:
+                if(strstr(line, "HPDrainRate:")) {
+                    beatmap->hpDrain = GetBeatmapInfoFloat(line);
+                }
+                else if(strstr(line, "OverallDifficulty:")) {
+                    beatmap->od = GetBeatmapInfoFloat(line);
+                    if(beatmap->od < 5) {
+                        hitWindowGreat = 35.0f - (35.0f - 50.0f) * (5.0f - beatmap-> od) / 5.0f;
+                        hitWindowGood = 80.0f - (80.0f - 120.0f) * (5.0f - beatmap->od) / 5.0f;
+                        hitWindowMiss = 95.0f - (95.0f - 135.0f) * (5.0f - beatmap->od) / 5.0f;
+                    } else if(beatmap->od > 5) {
+                        hitWindowGreat = 35.0f + (20.0f - 35.0f) * (beatmap->od - 5.0f) / 5.0f;
+                        hitWindowGood = 80.0f + (50.0f - 80.0f) * (beatmap->od - 5.0f) / 5.0f;
+                        hitWindowMiss = 95.0f + (70.0f - 95.0f) * (beatmap->od - 5.0f) / 5.0f;
+                    } else {
+                        hitWindowGreat = 35;
+                        hitWindowGood = 80;
+                        hitWindowMiss = 95;
+                    }
+                }
+                break;
         }
+
         // Counting the amount of hitobjects in order to allocate enough memory later
-        if (currentSection == HitObjects) {
+        if (currentSection == HitObjects)
             beatmap->noteCount++;
-        }
     }
     // We finished counting the objects, so now we can allocate enough memory
     beatmap->notes = malloc(beatmap->noteCount * sizeof(Note));
