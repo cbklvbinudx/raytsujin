@@ -29,17 +29,20 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
     int currentSection = 0;
     long int hitObjectsPosition;
 
-    FILE* filePointer;
+    FILE* file = fopen(fileName, "r");;
+
+    if(!file) {
+        printf("Failed to open file\n");
+        abort(); // TODO: also handle this
+    }
 
     char line[2048] = { 0 };
-
-    filePointer = fopen(fileName, "r");
 
 
     // Initialized at the right end of the screen
     Vector2 notePosition = { 800.0f, 50.0f + (float)scrollFieldOffset };
 
-    while(fgets(line, 2048, filePointer)) {
+    while(fgets(line, 2048, file)) {
 
         if(strstr(line, "[General]")) {
             currentSection = General;
@@ -63,7 +66,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         }
         else if(strstr(line, "[HitObjects]")) {
             currentSection = HitObjects;
-            hitObjectsPosition = ftell(filePointer);
+            hitObjectsPosition = ftell(file);
             continue;
         }
 
@@ -120,8 +123,8 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
     beatmap->notes = malloc(beatmap->noteCount * sizeof(Note));
     beatmap->noteCount = 0;
     // We skip to the [HitObjects] section and fill in the notes data
-    fseek(filePointer, hitObjectsPosition, SEEK_SET);
-    while (fgets(line, 2048, filePointer)) {
+    fseek(file, hitObjectsPosition, SEEK_SET);
+    while (fgets(line, 2048, file)) {
 
         const char *x_str = strtok(line, ",");
         const char *y_str = strtok(NULL, ",");
@@ -162,7 +165,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
                                                                                                  : RED;
         beatmap->noteCount++;
     }
-    fclose(filePointer);
+    fclose(file);
 
     const char* parentDirectory = GetPrevDirectoryPath(fileName);
     beatmap -> directory = malloc(strlen(parentDirectory) + 1);
