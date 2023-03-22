@@ -25,7 +25,7 @@ endif()
 
 # Our Project
 
-add_executable(${PROJECT_NAME} main.c beatmap.c mainMenu.c finishScreen.c finishScreen.h rayguiImpl.c)
+add_executable(${PROJECT_NAME} main.c beatmap.c mainMenu.c finishScreen.c finishScreen.h rayguiImpl.c dbReader.c)
 #set(raylib_VERBOSE 1)
 
 if(WIN32)
