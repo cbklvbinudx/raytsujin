@@ -152,23 +152,17 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
 
         int hitsound = strtol(hitsound_str, NULL, 10);
 
-        // TODO: properly read the flags
-        if (!(hitsound & 1)) {
-            beatmap->notes[beatmap->noteCount].isBlue = 0;
-            beatmap->notes[beatmap->noteCount].bigNote = 0;
-        } else if (hitsound & 4) {
-            beatmap->notes[beatmap->noteCount].isBlue = 0;
-            beatmap->notes[beatmap->noteCount].bigNote = 1;
-        } else if (hitsound & 6 || ~hitsound & 12) {
-            beatmap->notes[beatmap->noteCount].isBlue = 1;
-            beatmap->notes[beatmap->noteCount].bigNote = 1;
-        } else {
-            beatmap->notes[beatmap->noteCount].isBlue = 1;
-            beatmap->notes[beatmap->noteCount].bigNote = 0;
-        }
+        // Hitsound bits:
+        // 0: Normal (?)
+        // 1: Whistle (blue note)
+        // 2: Finish (big note)
+        // 3: Clap (blue note)
+        beatmap->notes[beatmap->noteCount].isBlue = hitsound & 2 || hitsound & 8;
+        beatmap->notes[beatmap->noteCount].bigNote = hitsound & 4;
 
-        beatmap->notes[beatmap->noteCount].noteColor = beatmap->notes[beatmap->noteCount].isBlue ? BLUE
-                                                                                                 : RED;
+        beatmap->notes[beatmap->noteCount].noteColor =
+            beatmap->notes[beatmap->noteCount].isBlue ? BLUE : RED;
+
         beatmap->noteCount++;
     }
     fclose(file);
