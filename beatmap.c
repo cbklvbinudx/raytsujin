@@ -135,10 +135,12 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         const char *time_str = strtok(NULL, ",");
         const char *type_str = strtok(NULL, ",");
         const char *hitsound_str = strtok(NULL, ",");
-        const char *objParams = strtok(NULL, ",");
-        const char *hitSample = strtok(NULL, ",");
 
-        if(!(x_str && y_str && time_str && type_str && objParams && hitSample)) {
+        // Let's forget about these for now
+        // const char *objParams = strtok(NULL, ",");
+        // const char *hitSample = strtok(NULL, ",");
+
+        if(!(x_str && y_str && time_str && type_str)) {
             printf("File is misformatted");
             abort(); // TODO: actually handle the error somehow
         }
@@ -213,18 +215,11 @@ float GetBeatmapInfoFloat(char* line) {
 }
 
 char* GetBeatmapInfoString(char* line) {
-
-    strtok(line, ":");
-    char* valuePtr = strtok(NULL, ":");
+    strtok(line, ":\r\n");
+    char* valuePtr = strtok(NULL, ":\r\n");
 
     // Skip leading whitespace
-    while(isspace(*valuePtr)) {
-        valuePtr++;
-    }
-
-    // Replace trailing whitespace with null
-    for(char* endPtr = valuePtr + strlen(valuePtr) - 1; !isspace(*valuePtr) && endPtr >= valuePtr; endPtr--) 
-        *endPtr ='\0';
+    while(isspace(*valuePtr)) valuePtr++;
 
     char* returnString = malloc(strlen(valuePtr) + 1);
     strcpy(returnString, valuePtr);
