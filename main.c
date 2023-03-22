@@ -230,7 +230,7 @@ void UpdateGamePlaying() {
 
     deltaPress = fabsf(noteTiming - songTimeElapsed);
 
-    if((songTimeElapsed - noteTiming > hitWindowGood)) {
+    if((songTimeElapsed - noteTiming > hitWindowGood) || currentBeatmap->notes[currentNote].timing < 0) {
         // If no note pressed in time
         NoteMiss();
     }
