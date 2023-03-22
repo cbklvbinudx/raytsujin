@@ -139,10 +139,10 @@ void DrawElementsPlaying() {
     DrawPlayfield();
 
     if(currentBeatmap->notes[0].timing - songTimeElapsed > 1500) {
-        DrawRectangleGradientV(screenWidth / 2 - 400 / 2, screenHeight - 100, 400, 100, BLANK, Fade(BLACK, 0.6f));
-        DrawTextEx(GuiGetFont(), "SKIP",
-                   (Vector2) { (float)screenWidth / 2 - MeasureTextEx(GuiGetFont(), "SKIP",68, 2).x / 2,
-                               (float)screenHeight - 65 }, 68, 2, WHITE);
+        DrawRectangleGradientV(screenWidth / 2 - 450 / 2, screenHeight - 100, 450, 100, BLANK, Fade(BLACK, 0.6f));
+        DrawTextEx(GuiGetFont(), "PRESS SPACE TO SKIP",
+                   (Vector2) { (float)screenWidth / 2 - MeasureTextEx(GuiGetFont(), "PRESS SPACE TO SKIP",48, 2).x / 2,
+                               (float)screenHeight - 65 }, 48, 2, WHITE);
     }
 
     if(IsKeyDown(KEY_K)) {

@@ -14,6 +14,8 @@ Don (Red): **F, J**
 
 Retry: **`**
 
+Skip: **Space**
+
 Toggle fullscreen: **F**
 
 Raise volume: **Up arrow**
