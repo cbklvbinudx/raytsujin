@@ -36,8 +36,7 @@ Beatmap* LoadBeatmapFromFile(const char* fileName) {
         abort(); // TODO: also handle this
     }
 
-    char line[2048] = { 0 };
-
+    static char line[2048] = { 0 };
 
     // Initialized at the right end of the screen
     Vector2 notePosition = { 800.0f, 50.0f + (float)scrollFieldOffset };
