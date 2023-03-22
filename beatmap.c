@@ -207,9 +207,17 @@ void FreeBeatmap(Beatmap* beatmap) {
     free(beatmap);
 }
 
+
 float GetBeatmapInfoFloat(char* line) {
     char* valuePtr = GetBeatmapInfoString(line);
     float ret = strtof(valuePtr, NULL);
+    free(valuePtr);
+    return ret;
+}
+
+int GetBeatmapInfoInt(char* line) {
+    char* valuePtr = GetBeatmapInfoString(line);
+    float ret = strtoll(valuePtr, NULL, 10);
     free(valuePtr);
     return ret;
 }
