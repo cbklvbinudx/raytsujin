@@ -37,6 +37,7 @@ void FreeBeatmap(Beatmap* beatmap);
 void LoadBeatmapAudio(Beatmap* beatmap);
 void LoadBeatmapBackground(Beatmap* beatmap);
 
+int GetBeatmapInfoInt(char* line);
 float GetBeatmapInfoFloat(char* line);
 char* GetBeatmapInfoString(char* line);
 
