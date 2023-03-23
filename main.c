@@ -25,7 +25,6 @@ float songTimeElapsed;
 
 float lastNoteTiming = 0.0f; // Used for judgement feedback images (hit, miss)
 int currentNote = 0;
-float deltaPress = 0;
 
 int comboCounter = 0;
 int missCounter = 0;
@@ -223,12 +222,13 @@ void UpdateGamePlaying() {
     }
 
     float noteTiming = currentBeatmap->notes[currentNote].timing;
+    float deltaPress = fabsf(noteTiming - songTimeElapsed);
+
     int hit = (deltaPress < hitWindowMiss) && currentBeatmap->notes[currentNote].isPressed == 0;
 
     int isBluePressed = (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_K));
     int isRedPressed = (IsKeyPressed(KEY_F) || IsKeyPressed(KEY_J));
 
-    deltaPress = fabsf(noteTiming - songTimeElapsed);
 
     if(songTimeElapsed - noteTiming > hitWindowGood) {
         // If no note pressed in time
