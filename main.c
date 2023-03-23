@@ -217,9 +217,9 @@ void DrawNote(Note* taikoNote) {
 void UpdateGamePlaying() {
 
     if(currentNote == 0) {
-        accuracy = 100 * 1.0f;
+        accuracy = 100.f;
     } else {
-        accuracy = 100 * ((float)greatCounter + (float)goodCounter / 2.0f) / ((float)greatCounter + (float)goodCounter + (float)missCounter);
+        accuracy = 100.f * ((float)greatCounter + (float)goodCounter / 2.0f) / (float)(greatCounter + goodCounter + missCounter);
     }
 
     float noteTiming = currentBeatmap->notes[currentNote].timing;
