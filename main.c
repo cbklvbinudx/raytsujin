@@ -3,6 +3,7 @@
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
+#include <stdio.h>
 #include "finishScreen.h"
 #include "raygui.h"
 
@@ -87,12 +88,12 @@ int main() {
             if(lastGameState != Playing) {
                 PlayMusicStream(currentBeatmap->audio);
             }
-            if(GetMusicTimePlayed(currentBeatmap->audio) > GetMusicTimeLength(currentBeatmap->audio) - 0.01) {
+            UpdateMusicStream(currentBeatmap->audio);
+            songTimeElapsed = GetMusicTimePlayed(currentBeatmap->audio) * 1000.f; // Time played in milliseconds, for use with .osu file timing
+            if(songTimeElapsed > GetMusicTimeLength(currentBeatmap->audio) * 1000.f - 0.01f) {
                 gameStateSwitch = Finished;
             }
-            songTimeElapsed = GetMusicTimePlayed(currentBeatmap->audio) * 1000; // Time played in milliseconds, for use with .osu file timing
             lastGameState = Playing;
-            UpdateMusicStream(currentBeatmap->audio);
             UpdateGamePlaying();
             DrawElementsPlaying();
         } else if(gameStateSwitch == Finished) {
