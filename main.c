@@ -90,7 +90,7 @@ int main() {
             }
             UpdateMusicStream(currentBeatmap->audio);
             songTimeElapsed = GetMusicTimePlayed(currentBeatmap->audio) * 1000.f; // Time played in milliseconds, for use with .osu file timing
-            if(songTimeElapsed > GetMusicTimeLength(currentBeatmap->audio) * 1000.f - 0.01f) {
+            if(songTimeElapsed > GetMusicTimeLength(currentBeatmap->audio) * 1000.f - 10.f) {
                 gameStateSwitch = Finished;
             }
             lastGameState = Playing;
