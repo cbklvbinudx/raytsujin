@@ -60,6 +60,7 @@ void UpdateMainMenu() {
         if(droppedFiles.count == 1 && IsFileExtension(droppedFiles.paths[0], ".osu")) {
             if(currentBeatmap) FreeBeatmap(currentBeatmap);
             currentBeatmap = LoadBeatmapFromFile(droppedFiles.paths[0]);
+            SetWindowTitle(TextFormat("%s - %s [%s]", currentBeatmap->artist, currentBeatmap->title, currentBeatmap->difficultyName));
         }
 
         UnloadDroppedFiles(droppedFiles);
