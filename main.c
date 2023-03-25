@@ -266,7 +266,7 @@ void UpdateGamePlaying() {
             NoteMiss();
         }
     }
-    if(currentBeatmap->notes[0].timing - songTimeElapsed > 1000) {
+    if(currentBeatmap->notes[0].timing - songTimeElapsed > 1500) {
         if(IsKeyPressed(KEY_SPACE)) {
             SeekMusicStream(currentBeatmap->audio, (currentBeatmap->notes[0].timing - 1500) / 1000);
         }
