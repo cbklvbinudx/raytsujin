@@ -21,12 +21,3 @@ Toggle fullscreen: **F**
 Raise volume: **Up arrow**
 
 Lower volume: **Down arrow**
-
-# Building
-Make sure to rebuild your raylib to support .jpg files.
-
-It can be done by uncommenting 
-```
-#define SUPPORT_FILEFORMAT_JPG      1
-```
-in *../raylib/src/config.h* and rebuilding.
