@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include "finishScreen.h"
 #include "raygui.h"
+#include "globalState.h"
 
 void DrawElementsPlaying();
 void DrawPlayfield();
@@ -25,6 +26,8 @@ enum Judgements {
 float songTimeElapsed;
 
 float lastNoteTiming = 0.0f; // Used for judgement feedback images (hit, miss)
+double changeTime; // Used for displaying the current volume for a specific amount of time
+
 int currentNote = 0;
 
 int comboCounter = 0;
@@ -105,12 +108,21 @@ int main() {
             lastGameState = Finished;
         }
 
-        if(IsKeyPressed(KEY_UP) && currentVolume < 1.0f) {
-            currentVolume += 0.05f;
-            SetMasterVolume(currentVolume);
-        } else if(IsKeyPressed(KEY_DOWN)) {
-            currentVolume -= 0.05f;
-            SetMasterVolume(currentVolume);
+        // Global keybindings
+
+        if(IsKeyPressed(KEY_UP)) {
+            if(currentVolume < 1.0f) {
+                currentVolume += 0.05f;
+                SetMasterVolume(currentVolume);
+            }
+            changeTime = GetTime();
+        }
+        if(IsKeyPressed(KEY_DOWN)) {
+            if(currentVolume > 0.f) {
+                currentVolume -= 0.05f;
+                SetMasterVolume(currentVolume);
+            }
+            changeTime = GetTime();
         }
     }
 
@@ -187,6 +199,8 @@ void DrawElementsPlaying() {
                (Vector2) { (float)screenWidth - MeasureTextEx(GuiGetFont(), TextFormat("%.2f%%", accuracy), 68, 2).x,
                            (float)screenHeight - 65 },
                68, 2, WHITE);
+
+    DisplayVolume(currentVolume, changeTime);
 
     EndDrawing();
 }

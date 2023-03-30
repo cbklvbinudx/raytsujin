@@ -3,7 +3,7 @@
 #include "config.h"
 #include "raygui.h"
 #include "beatmap.h"
-
+#include "globalState.h"
 
 void DrawMainMenu() {
     BeginDrawing();
@@ -31,6 +31,8 @@ void DrawMainMenu() {
 
         gameStateSwitch = GuiButton(buttonRectangle, "File loaded! Press this button or ENTER to play.");
     }
+
+    DisplayVolume(currentVolume, changeTime);
 
     EndDrawing();
 }

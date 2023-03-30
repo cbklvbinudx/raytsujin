@@ -3,6 +3,7 @@
 #include "raygui.h"
 #include "config.h"
 #include "beatmap.h"
+#include "globalState.h"
 
 int backButtonSwitch = 0;
 
@@ -24,6 +25,8 @@ void DrawFinishScreen() {
 
     backButtonSwitch = GuiButton((Rectangle){ 100, (float)screenHeight - 200, (float)screenWidth / 3, (float)screenHeight / 7 },
                                            "Back");
+
+    DisplayVolume(currentVolume, changeTime);
 
     EndDrawing();
 }
