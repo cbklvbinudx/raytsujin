@@ -3,7 +3,6 @@
 #include "mainMenu.h"
 #include "config.h"
 #include <math.h>
-#include <stdio.h>
 #include "finishScreen.h"
 #include "raygui.h"
 #include "globalState.h"
@@ -209,9 +208,11 @@ void DrawPlayfield() {
     DrawTexturePro(currentBeatmap->background, (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight },
                    (Rectangle) { 0, 0, (float)screenWidth, (float)screenHeight }, (Vector2) { 0, 0 }, 0,
                    WHITE);
-    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, (int)scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawCircleGradient(0, screenHeight, 250, BLACK, BLANK);
     DrawCircleGradient(screenWidth, screenHeight, 250, BLACK, BLANK);
+    DrawCircleGradient(0, 0, 250, BLACK, BLANK);
+    DrawCircleGradient(screenWidth, 0, 250, BLACK, BLANK);
+    DrawRectangleGradientH(0, scrollFieldOffset, screenWidth, (int)scrollFieldHeight, Fade(GRAY, 0.8f), Fade(BLACK, 0.8f));
     DrawCircleV(destinationCirclePosition, scrollFieldHeight / 2, BLACK); // The destination circle
 }
 
