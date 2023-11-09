@@ -218,7 +218,7 @@ int GetBeatmapInfoInt(char* line) {
 
 char* GetBeatmapInfoString(char* line) {
     strtok(line, ":\r\n");
-    char* valuePtr = strtok(NULL, ":\r\n");
+    char* valuePtr = strtok(NULL, "\r\n");
 
     // Skip leading whitespace
     while(isspace(*valuePtr)) valuePtr++;
